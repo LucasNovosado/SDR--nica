@@ -12,24 +12,20 @@ export interface Loja {
 
 export interface Lead {
   id: string
-  usuario_id: string
   loja_id: string
   data: string
   hora: string
   convertido: boolean | null
   motivo_perda: string | null
-  origem: string
   criado_em: string
   tipo: 'whatsapp/telefone' | 'cliente físico'
 }
 
 export interface Pontuacao {
   id: string
-  usuario_id: string
   loja_id: string
   data: string
   pontos: number
-  origem: string
   criado_em: string
 }
 
@@ -102,34 +98,45 @@ export const diarioService = {
   },
 
   async createLead(leadData: {
-    usuario_id: string
     loja_id: string
     tipo: 'whatsapp/telefone' | 'cliente físico'
-    origem: string
   }): Promise<{ data: Lead | null; error: any }> {
     try {
+      console.log('Dados recebidos para criar lead:', leadData)
+      
       const now = new Date()
       const data = now.toISOString().split('T')[0] // YYYY-MM-DD
       const hora = now.toTimeString().split(' ')[0] // HH:MM:SS
 
+      const leadToInsert = {
+        loja_id: leadData.loja_id,
+        data,
+        hora,
+        convertido: null,
+        motivo_perda: null,
+        tipo: leadData.tipo
+      }
+
+      console.log('Dados que serão inseridos:', leadToInsert)
+
       const { data: lead, error } = await supabase
         .from('leads')
-        .insert({
-          ...leadData,
-          data,
-          hora,
-          convertido: null
-        })
+        .insert(leadToInsert)
         .select()
         .single()
 
       if (error) {
-        console.error('Erro ao criar lead:', error)
+        console.error('Erro detalhado ao criar lead:', error)
+        console.error('Código do erro:', error.code)
+        console.error('Mensagem do erro:', error.message)
+        console.error('Detalhes do erro:', error.details)
+      } else {
+        console.log('Lead criado com sucesso:', lead)
       }
 
       return { data: lead, error }
     } catch (error) {
-      console.error('Erro ao criar lead:', error)
+      console.error('Erro na função createLead:', error)
       return { data: null, error }
     }
   },
@@ -189,10 +196,8 @@ export const diarioService = {
   },
 
   async createPontuacao(pontuacaoData: {
-    usuario_id: string
     loja_id: string
     pontos: number
-    origem: string
   }): Promise<{ data: Pontuacao | null; error: any }> {
     try {
       const data = new Date().toISOString().split('T')[0] // YYYY-MM-DD

@@ -8,11 +8,12 @@ import {
   Users,
   MessageCircle,
   TrendingUp,
-  Store
+  Store,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react'
-import ContadorLeads from './ContadorLeads'
-import ListaLeads from './ListaLeads'
 import MotivoPerdaModal from './MotivoPerdaModal'
+import AdicionarLeadModal from './AdicionarLeadModal'
 import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
@@ -33,6 +34,7 @@ const DiarioLojaPage: React.FC = () => {
   })
   const [loading, setLoading] = useState(true)
   const [showMotivoPerdaModal, setShowMotivoPerdaModal] = useState(false)
+  const [showAdicionarLeadModal, setShowAdicionarLeadModal] = useState(false)
   const [leadSelecionado, setLeadSelecionado] = useState<string>('')
 
   useEffect(() => {
@@ -58,7 +60,6 @@ const DiarioLojaPage: React.FC = () => {
       
       setLojas(lojasData)
       
-      // Se só tem uma loja ou é vendedor, seleciona automaticamente
       if (lojasData.length === 1 || userWithLevel.nivel === 'vendedor') {
         setLojaSelecionada(lojasData[0]?.id || '')
       }
@@ -74,12 +75,8 @@ const DiarioLojaPage: React.FC = () => {
 
     try {
       const hoje = new Date().toISOString().split('T')[0]
-      
-      // Carregar leads do dia
       const leadsData = await diarioService.getLeadsByLoja(lojaSelecionada, hoje)
       setLeads(leadsData)
-      
-      // Calcular estatísticas
       const stats = await diarioService.getEstatisticasDiarias(lojaSelecionada, hoje)
       setEstatisticas(stats)
     } catch (error) {
@@ -87,32 +84,36 @@ const DiarioLojaPage: React.FC = () => {
     }
   }
 
-  const adicionarLead = async (tipo: 'whatsapp/telefone' | 'cliente físico') => {
-    if (!userWithLevel || !lojaSelecionada) return
+  const adicionarLead = async (tipo: 'whatsapp/telefone' | 'cliente físico', lojaId?: string) => {
+    const lojaParaUsar = lojaId || lojaSelecionada
+    
+    if (!lojaParaUsar) return
 
     try {
       const { data, error } = await diarioService.createLead({
-        usuario_id: userWithLevel.id,
-        loja_id: lojaSelecionada,
-        tipo,
-        origem: 'diario_loja'
+        loja_id: lojaParaUsar,
+        tipo
       })
 
       if (error) {
-        console.error('Erro ao adicionar lead:', error)
+        alert(`Erro ao adicionar lead: ${error.message || 'Erro desconhecido'}`)
         return
       }
 
-      // Recarregar dados
-      await carregarDadosLoja()
+      if (data) {
+        if (lojaParaUsar !== lojaSelecionada) {
+          setLojaSelecionada(lojaParaUsar)
+        }
+        await carregarDadosLoja()
+      }
     } catch (error) {
-      console.error('Erro ao adicionar lead:', error)
+      console.error('Erro na função adicionarLead:', error)
+      alert('Erro inesperado ao adicionar lead')
     }
   }
 
   const handleLeadConversao = async (leadId: string, convertido: boolean) => {
     if (convertido) {
-      // Conversão positiva - atualizar diretamente
       try {
         const { error } = await diarioService.updateLeadConversao(leadId, true)
         if (!error) {
@@ -122,7 +123,6 @@ const DiarioLojaPage: React.FC = () => {
         console.error('Erro ao converter lead:', error)
       }
     } else {
-      // Conversão negativa - abrir modal para motivo
       setLeadSelecionado(leadId)
       setShowMotivoPerdaModal(true)
     }
@@ -142,7 +142,12 @@ const DiarioLojaPage: React.FC = () => {
     }
   }
 
+  const formatarHora = (hora: string) => {
+    return hora.substring(0, 5)
+  }
+
   const loja = lojas.find(l => l.id === lojaSelecionada)
+  const showLojaSelector = lojas.length > 1 && userWithLevel?.nivel !== 'vendedor'
 
   if (loading) {
     return (
@@ -155,101 +160,115 @@ const DiarioLojaPage: React.FC = () => {
 
   return (
     <div className="diario-container">
-      <div className="diario-background">
-        <div className="floating-elements">
-          <div className="floating-element blue"></div>
-          <div className="floating-element yellow"></div>
-          <div className="floating-element blue small"></div>
-          <div className="floating-element yellow small"></div>
-        </div>
-      </div>
-
       <div className="diario-header">
         <div className="header-left">
           <button className="back-button" onClick={() => navigate('/menu')}>
             <ArrowLeft size={20} />
             Voltar
           </button>
-          <h1 className="page-title">
-            <span className="text-gradient-blue">Diário da</span>
-            <span className="text-gradient-yellow"> Loja</span>
-          </h1>
+          <h1 className="page-title">Diário da Loja</h1>
         </div>
 
-        {lojas.length > 1 && (
-          <div className="loja-selector">
-            <Store size={20} />
-            <select 
-              value={lojaSelecionada} 
-              onChange={(e) => setLojaSelecionada(e.target.value)}
-              className="loja-select"
-            >
-              <option value="">Selecione uma loja</option>
-              {lojas.map(loja => (
-                <option key={loja.id} value={loja.id}>
-                  {loja.nome} - {loja.cidade}
-                </option>
-              ))}
-            </select>
-          </div>
+        {showLojaSelector && (
+          <select 
+            value={lojaSelecionada} 
+            onChange={(e) => setLojaSelecionada(e.target.value)}
+            className="loja-select"
+          >
+            <option value="">Selecione uma loja</option>
+            {lojas.map(loja => (
+              <option key={loja.id} value={loja.id}>
+                {loja.nome} - {loja.cidade}
+              </option>
+            ))}
+          </select>
         )}
       </div>
 
       {lojaSelecionada && loja && (
         <div className="diario-content">
-          <div className="loja-info">
-            <h2 className="loja-nome">{loja.nome}</h2>
-            <p className="loja-detalhes">{loja.cidade}, {loja.estado}</p>
+          {/* Header da Loja */}
+          <div className="loja-header">
+            <h2>{loja.nome}</h2>
+            <p>{loja.cidade}, {loja.estado}</p>
           </div>
 
-          <div className="stats-grid">
-            <div className="stat-card blue">
-              <div className="stat-icon">
-                <Users size={24} />
+          {/* Métricas Principais */}
+          <div className="metrics-card">
+            <div className="metrics-row main">
+              <div className="metric">
+                <div className="metric-number total">{estatisticas.totalLeads}</div>
+                <div className="metric-label">Clientes</div>
               </div>
-              <div className="stat-content">
-                <h3 className="stat-number">{estatisticas.totalLeads}</h3>
-                <p className="stat-label">Total de Leads</p>
+              <div className="metric">
+                <div className="metric-number success">{estatisticas.leadsConvertidos}</div>
+                <div className="metric-label">Vendas</div>
               </div>
-            </div>
-
-            <div className="stat-card yellow">
-              <div className="stat-icon">
-                <TrendingUp size={24} />
-              </div>
-              <div className="stat-content">
-                <h3 className="stat-number">{estatisticas.taxaConversao.toFixed(1)}%</h3>
-                <p className="stat-label">Taxa de Conversão</p>
+              <div className="metric">
+                <div className="metric-number danger">{estatisticas.leadsPerdidos}</div>
+                <div className="metric-label">Perdidas</div>
               </div>
             </div>
 
-            <div className="stat-card green">
-              <div className="stat-icon">
-                <MessageCircle size={24} />
+            <div className="metrics-row secondary">
+              <div className="metric">
+                <div className="metric-number">{estatisticas.taxaConversao.toFixed(0)}%</div>
+                <div className="metric-label">Conversão</div>
               </div>
-              <div className="stat-content">
-                <h3 className="stat-number">{estatisticas.leadsConvertidos}</h3>
-                <p className="stat-label">Convertidos</p>
-              </div>
+            
             </div>
           </div>
 
-          <ContadorLeads 
-            leadsWhatsapp={estatisticas.leadsWhatsapp}
-            leadsFisicos={estatisticas.leadsFisicos}
-            onAdicionarLead={adicionarLead}
-          />
+          {/* Lista de Leads */}
+          {leads.length > 0 && (
+            <div className="leads-card">
+              <h3>Clientes de Hoje ({leads.length})</h3>
+              <div className="leads-list">
+                {leads.map((lead) => (
+                  <div key={lead.id} className={`lead-item ${lead.convertido === true ? 'success' : lead.convertido === false ? 'danger' : 'pending'}`}>
+                    <div className="lead-info">
+                      <div className="lead-tipo">
+                        {lead.tipo === 'whatsapp/telefone' ? (
+                          <MessageCircle size={16} />
+                        ) : (
+                          <Users size={16} />
+                        )}
+                        <span>{lead.tipo === 'whatsapp/telefone' ? 'WhatsApp' : 'Físico'}</span>
+                      </div>
+                      <div className="lead-hora">{formatarHora(lead.hora)}</div>
+                    </div>
+                    
+                    {lead.motivo_perda && (
+                      <div className="lead-motivo">{lead.motivo_perda}</div>
+                    )}
 
-          <ListaLeads 
-            leads={leads}
-            onLeadConversao={handleLeadConversao}
-          />
+                    {lead.convertido === null && (
+                      <div className="lead-actions">
+                        <button
+                          className="action-btn success"
+                          onClick={() => handleLeadConversao(lead.id, true)}
+                        >
+                          <ThumbsUp size={14} />
+                        </button>
+                        <button
+                          className="action-btn danger"
+                          onClick={() => handleLeadConversao(lead.id, false)}
+                        >
+                          <ThumbsDown size={14} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {!lojaSelecionada && lojas.length > 1 && (
+      {!lojaSelecionada && showLojaSelector && (
         <div className="empty-state">
-          <Store size={64} className="empty-icon" />
+          <Store size={48} />
           <h3>Selecione uma loja</h3>
           <p>Escolha uma loja para visualizar o diário</p>
         </div>
@@ -257,16 +276,35 @@ const DiarioLojaPage: React.FC = () => {
 
       {lojas.length === 0 && (
         <div className="empty-state">
-          <Store size={64} className="empty-icon" />
+          <Store size={48} />
           <h3>Nenhuma loja encontrada</h3>
           <p>Você não tem permissão para visualizar dados de lojas</p>
         </div>
+      )}
+
+      {/* FAB Button */}
+      {(lojaSelecionada || showLojaSelector) && (
+        <button 
+          className="fab-button"
+          onClick={() => setShowAdicionarLeadModal(true)}
+        >
+          <Plus size={24} />
+        </button>
       )}
 
       <MotivoPerdaModal
         isOpen={showMotivoPerdaModal}
         onClose={() => setShowMotivoPerdaModal(false)}
         onConfirm={handleMotivoPerdaConfirm}
+      />
+
+      <AdicionarLeadModal
+        isOpen={showAdicionarLeadModal}
+        onClose={() => setShowAdicionarLeadModal(false)}
+        onConfirm={adicionarLead}
+        lojas={lojas}
+        lojaSelecionada={lojaSelecionada}
+        showLojaSelector={showLojaSelector}
       />
     </div>
   )

@@ -1,14 +1,15 @@
 import React from 'react'
 import { Lead } from '../../services/diarioService'
-import { ThumbsUp, ThumbsDown, MessageCircle, Users, Clock } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, MessageCircle, Users, Clock, Edit } from 'lucide-react'
 import './ListaLeads.css'
 
 interface ListaLeadsProps {
   leads: Lead[]
   onLeadConversao: (leadId: string, convertido: boolean) => void
+  onEditarLead: (lead: Lead) => void
 }
 
-const ListaLeads: React.FC<ListaLeadsProps> = ({ leads, onLeadConversao }) => {
+const ListaLeads: React.FC<ListaLeadsProps> = ({ leads, onLeadConversao, onEditarLead }) => {
   const formatarHora = (hora: string) => {
     return hora.substring(0, 5) // HH:MM
   }
@@ -28,7 +29,7 @@ const ListaLeads: React.FC<ListaLeadsProps> = ({ leads, onLeadConversao }) => {
   if (leads.length === 0) {
     return (
       <div className="lista-leads-container">
-        <h3 className="lista-title">Leads do Dia</h3>
+        <h3 className="lista-title">Clientes do Dia</h3>
         <div className="empty-leads">
           <Users size={48} className="empty-icon" />
           <h4>Nenhum lead registrado hoje</h4>
@@ -40,7 +41,7 @@ const ListaLeads: React.FC<ListaLeadsProps> = ({ leads, onLeadConversao }) => {
 
   return (
     <div className="lista-leads-container">
-      <h3 className="lista-title">Leads do Dia ({leads.length})</h3>
+      <h3 className="lista-title">Clientes do Dia ({leads.length})</h3>
       
       <div className="leads-grid">
         {leads.map((lead) => (
@@ -60,9 +61,19 @@ const ListaLeads: React.FC<ListaLeadsProps> = ({ leads, onLeadConversao }) => {
                 )}
               </div>
               
-              <div className="lead-hora">
-                <Clock size={16} />
-                <span>{formatarHora(lead.hora)}</span>
+              <div className="lead-info">
+                <div className="lead-hora">
+                  <Clock size={16} />
+                  <span>{formatarHora(lead.hora)}</span>
+                </div>
+                
+                <button
+                  className="edit-button"
+                  onClick={() => onEditarLead(lead)}
+                  title="Editar lead"
+                >
+                  <Edit size={16} />
+                </button>
               </div>
             </div>
 
