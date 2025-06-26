@@ -169,6 +169,60 @@ export const diarioService = {
     }
   },
 
+  async deleteLead(leadId: string): Promise<{ data: any; error: any }> {
+    try {
+      console.log('Deletando lead:', leadId)
+      
+      const { data, error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId)
+        .select()
+
+      if (error) {
+        console.error('Erro ao deletar lead:', error)
+        console.error('Código do erro:', error.code)
+        console.error('Mensagem do erro:', error.message)
+        console.error('Detalhes do erro:', error.details)
+      } else {
+        console.log('Lead deletado com sucesso:', data)
+      }
+
+      return { data, error }
+    } catch (error) {
+      console.error('Erro na função deleteLead:', error)
+      return { data: null, error }
+    }
+  },
+
+  async updateLead(leadId: string, updateData: {
+    tipo?: 'whatsapp/telefone' | 'cliente físico'
+    data?: string
+    hora?: string
+  }): Promise<{ data: Lead | null; error: any }> {
+    try {
+      console.log('Atualizando lead:', leadId, updateData)
+
+      const { data: lead, error } = await supabase
+        .from('leads')
+        .update(updateData)
+        .eq('id', leadId)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Erro ao atualizar lead:', error)
+      } else {
+        console.log('Lead atualizado com sucesso:', lead)
+      }
+
+      return { data: lead, error }
+    } catch (error) {
+      console.error('Erro ao atualizar lead:', error)
+      return { data: null, error }
+    }
+  },
+
   // ===== PONTUAÇÕES =====
   async getPontuacoesByLoja(lojaId: string, data?: string): Promise<Pontuacao[]> {
     try {
@@ -255,6 +309,126 @@ export const diarioService = {
         leadsPendentes: 0,
         taxaConversao: 0
       }
+    }
+  },
+
+  // ===== RELATÓRIOS =====
+  async getLeadsByPeriodo(lojaId: string, dataInicio: string, dataFim: string): Promise<Lead[]> {
+    try {
+      const { data: leads, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('loja_id', lojaId)
+        .gte('data', dataInicio)
+        .lte('data', dataFim)
+        .order('data', { ascending: false })
+        .order('hora', { ascending: false })
+
+      if (error) {
+        console.error('Erro ao buscar leads por período:', error)
+        return []
+      }
+
+      return leads || []
+    } catch (error) {
+      console.error('Erro ao buscar leads por período:', error)
+      return []
+    }
+  },
+
+  async getEstatisticasPorPeriodo(lojaId: string, dataInicio: string, dataFim: string) {
+    try {
+      const leads = await this.getLeadsByPeriodo(lojaId, dataInicio, dataFim)
+      
+      const estatisticas = {
+        totalLeads: leads.length,
+        leadsWhatsapp: leads.filter(lead => lead.tipo === 'whatsapp/telefone').length,
+        leadsFisicos: leads.filter(lead => lead.tipo === 'cliente físico').length,
+        leadsConvertidos: leads.filter(lead => lead.convertido === true).length,
+        leadsPerdidos: leads.filter(lead => lead.convertido === false).length,
+        leadsPendentes: leads.filter(lead => lead.convertido === null).length,
+        taxaConversao: 0,
+        // Estatísticas por dia
+        estatisticasPorDia: {} as Record<string, any>
+      }
+
+      if (estatisticas.totalLeads > 0) {
+        estatisticas.taxaConversao = (estatisticas.leadsConvertidos / estatisticas.totalLeads) * 100
+      }
+
+      // Agrupar estatísticas por dia
+      leads.forEach(lead => {
+        if (!estatisticas.estatisticasPorDia[lead.data]) {
+          estatisticas.estatisticasPorDia[lead.data] = {
+            data: lead.data,
+            total: 0,
+            convertidos: 0,
+            perdidos: 0,
+            pendentes: 0,
+            whatsapp: 0,
+            fisicos: 0
+          }
+        }
+
+        const dia = estatisticas.estatisticasPorDia[lead.data]
+        dia.total++
+        
+        if (lead.convertido === true) dia.convertidos++
+        else if (lead.convertido === false) dia.perdidos++
+        else dia.pendentes++
+        
+        if (lead.tipo === 'whatsapp/telefone') dia.whatsapp++
+        else dia.fisicos++
+      })
+
+      return estatisticas
+    } catch (error) {
+      console.error('Erro ao calcular estatísticas por período:', error)
+      return {
+        totalLeads: 0,
+        leadsWhatsapp: 0,
+        leadsFisicos: 0,
+        leadsConvertidos: 0,
+        leadsPerdidos: 0,
+        leadsPendentes: 0,
+        taxaConversao: 0,
+        estatisticasPorDia: {}
+      }
+    }
+  },
+
+  // ===== UTILITÁRIOS =====
+  async verificarPermissaoLoja(userId: string, userLevel: string, lojaId: string): Promise<boolean> {
+    try {
+      if (userLevel === 'diretor') {
+        return true // Diretor tem acesso a todas as lojas
+      }
+
+      const lojas = await this.getLojasByUser(userId, userLevel)
+      return lojas.some(loja => loja.id === lojaId)
+    } catch (error) {
+      console.error('Erro ao verificar permissão da loja:', error)
+      return false
+    }
+  },
+
+  async buscarLead(leadId: string): Promise<Lead | null> {
+    try {
+      const { data: lead, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('id', leadId)
+        .single()
+
+      if (error) {
+        console.error('Erro ao buscar lead:', error)
+        return null
+      }
+
+      return lead
+    } catch (error) {
+      console.error('Erro ao buscar lead:', error)
+      return null
     }
   }
 }

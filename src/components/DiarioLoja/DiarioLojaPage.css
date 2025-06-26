@@ -116,28 +116,63 @@
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
+/* ===== SELETOR DE LOJA CORRIGIDO ===== */
 .loja-select {
-  padding: 0.625rem 1.25rem;
-  background: rgba(13, 13, 20, 0.8);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 0.875rem 3rem 0.875rem 1.25rem;
+  background: rgba(13, 13, 20, 0.9);
+  border: 2px solid rgba(139, 92, 246, 0.3);
   border-radius: 12px;
   color: var(--text-primary);
   font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
-  min-width: 220px;
+  font-weight: 500;
+  min-width: 240px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+}
+
+.loja-select:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  background-color: rgba(139, 92, 246, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
 }
 
 .loja-select:focus {
   outline: none;
-  border-color: rgba(139, 92, 246, 0.6);
-  background: rgba(139, 92, 246, 0.08);
+  border-color: rgba(139, 92, 246, 0.7);
+  background-color: rgba(139, 92, 246, 0.12);
   box-shadow: 
     0 0 0 3px rgba(139, 92, 246, 0.1),
-    0 8px 25px rgba(139, 92, 246, 0.15);
+    0 8px 25px rgba(139, 92, 246, 0.2);
+  transform: translateY(-2px);
+}
+
+.loja-select option {
+  background: rgba(13, 13, 20, 0.95);
+  color: var(--text-primary);
+  padding: 0.75rem;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+
+.loja-select option:first-child {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.loja-select option:hover,
+.loja-select option:checked {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
 }
 
 .diario-content {
@@ -657,6 +692,8 @@
   .loja-select {
     width: 100%;
     min-width: unset;
+    font-size: 0.85rem;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
   }
   
   .metrics-card,
@@ -713,6 +750,11 @@
     font-size: 1.1rem;
   }
   
+  .loja-select {
+    padding: 0.625rem 2.25rem 0.625rem 0.875rem;
+    font-size: 0.8rem;
+  }
+  
   .metrics-card,
   .leads-card {
     padding: 1.25rem;
@@ -740,4 +782,95 @@
     width: 52px;
     height: 52px;
   }
+}
+
+/* Suporte para dark mode */
+@media (prefers-color-scheme: dark) {
+  .loja-select {
+    background: rgba(13, 13, 20, 0.95);
+    border-color: rgba(139, 92, 246, 0.4);
+  }
+  
+  .loja-select option {
+    background: #0d0d14;
+    color: #ffffff;
+  }
+/* Adicione estes estilos ao seu DiarioLojaPage.css existente */
+
+/* Estilos para o botão de deletar */
+.action-btn.delete {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.action-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.8);
+  color: white;
+  opacity: 1;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 8px 25px rgba(239, 68, 68, 0.3),
+    0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+/* Estilos para o modal de confirmação de delete */
+.delete-modal-content {
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(239, 68, 68, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.4s ease;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(239, 68, 68, 0.1);
+}
+
+.delete-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.delete-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #ef4444;
+}
+
+.delete-modal-body {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.delete-modal-body h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.delete-modal-body p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
 }

@@ -10,10 +10,12 @@ import {
   TrendingUp,
   Store,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  Trash2
 } from 'lucide-react'
 import MotivoPerdaModal from './MotivoPerdaModal'
 import AdicionarLeadModal from './AdicionarLeadModal'
+import DeleteConfirmationModal from './DeleteConfirmationModal'
 import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
@@ -35,7 +37,9 @@ const DiarioLojaPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [showMotivoPerdaModal, setShowMotivoPerdaModal] = useState(false)
   const [showAdicionarLeadModal, setShowAdicionarLeadModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [leadSelecionado, setLeadSelecionado] = useState<string>('')
+  const [leadParaDeletar, setLeadParaDeletar] = useState<Lead | null>(null)
 
   useEffect(() => {
     carregarLojas()
@@ -142,6 +146,31 @@ const DiarioLojaPage: React.FC = () => {
     }
   }
 
+  const handleDeleteLead = (lead: Lead) => {
+    setLeadParaDeletar(lead)
+    setShowDeleteModal(true)
+  }
+
+  const confirmDeleteLead = async () => {
+    if (!leadParaDeletar) return
+
+    try {
+      const { error } = await diarioService.deleteLead(leadParaDeletar.id)
+      if (!error) {
+        await carregarDadosLoja()
+      } else {
+        console.error('Erro ao deletar lead:', error)
+        alert('Erro ao excluir cliente')
+      }
+    } catch (error) {
+      console.error('Erro ao deletar lead:', error)
+      alert('Erro inesperado ao excluir cliente')
+    } finally {
+      setShowDeleteModal(false)
+      setLeadParaDeletar(null)
+    }
+  }
+
   const formatarHora = (hora: string) => {
     return hora.substring(0, 5)
   }
@@ -215,7 +244,6 @@ const DiarioLojaPage: React.FC = () => {
                 <div className="metric-number">{estatisticas.taxaConversao.toFixed(0)}%</div>
                 <div className="metric-label">Conversão</div>
               </div>
-            
             </div>
           </div>
 
@@ -242,22 +270,35 @@ const DiarioLojaPage: React.FC = () => {
                       <div className="lead-motivo">{lead.motivo_perda}</div>
                     )}
 
-                    {lead.convertido === null && (
-                      <div className="lead-actions">
-                        <button
-                          className="action-btn success"
-                          onClick={() => handleLeadConversao(lead.id, true)}
-                        >
-                          <ThumbsUp size={14} />
-                        </button>
-                        <button
-                          className="action-btn danger"
-                          onClick={() => handleLeadConversao(lead.id, false)}
-                        >
-                          <ThumbsDown size={14} />
-                        </button>
-                      </div>
-                    )}
+                    <div className="lead-actions">
+                      {lead.convertido === null && (
+                        <>
+                          <button
+                            className="action-btn success"
+                            onClick={() => handleLeadConversao(lead.id, true)}
+                            title="Marcar como vendido"
+                          >
+                            <ThumbsUp size={14} />
+                          </button>
+                          <button
+                            className="action-btn danger"
+                            onClick={() => handleLeadConversao(lead.id, false)}
+                            title="Marcar como perdido"
+                          >
+                            <ThumbsDown size={14} />
+                          </button>
+                        </>
+                      )}
+                      
+                      {/* Botão de deletar - sempre visível */}
+                      <button
+                        className="action-btn delete"
+                        onClick={() => handleDeleteLead(lead)}
+                        title="Excluir cliente"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -292,6 +333,7 @@ const DiarioLojaPage: React.FC = () => {
         </button>
       )}
 
+      {/* Modais */}
       <MotivoPerdaModal
         isOpen={showMotivoPerdaModal}
         onClose={() => setShowMotivoPerdaModal(false)}
@@ -305,6 +347,14 @@ const DiarioLojaPage: React.FC = () => {
         lojas={lojas}
         lojaSelecionada={lojaSelecionada}
         showLojaSelector={showLojaSelector}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        leadTipo={leadParaDeletar?.tipo || ''}
+        leadHora={leadParaDeletar ? formatarHora(leadParaDeletar.hora) : ''}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDeleteLead}
       />
     </div>
   )
