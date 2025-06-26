@@ -1,16 +1,24 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
+import { 
+  Mail, 
+  Lock, 
+  CheckCircle, 
+  XCircle, 
+  Rocket, 
+  Zap,
+  Loader2
+} from 'lucide-react'
 import './LoginPage.css'
 
 const LoginPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
 
-  const { signIn, signUp } = useAuth()
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,24 +26,13 @@ const LoginPage: React.FC = () => {
     setMessage('')
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(email, password)
-        if (error) {
-          setMessage(error.message)
-          setMessageType('error')
-        } else {
-          setMessage('Login realizado com sucesso!')
-          setMessageType('success')
-        }
+      const { error } = await signIn(email, password)
+      if (error) {
+        setMessage(error.message)
+        setMessageType('error')
       } else {
-        const { error } = await signUp(email, password)
-        if (error) {
-          setMessage(error.message)
-          setMessageType('error')
-        } else {
-          setMessage('Conta criada! Verifique seu email para confirmar.')
-          setMessageType('success')
-        }
+        setMessage('Login realizado com sucesso!')
+        setMessageType('success')
       }
     } catch (error) {
       setMessage('Erro inesperado. Tente novamente.')
@@ -60,21 +57,24 @@ const LoginPage: React.FC = () => {
         <div className="login-card">
           <div className="login-header">
             <div className="logo">
-              <div className="logo-icon">⚡</div>
+              <div className="logo-icon">
+                <Zap size={48} />
+              </div>
               <h1 className="logo-text">
-                <span className="text-gradient-blue">Game</span>
-                <span className="text-gradient-yellow">Hub</span>
+                <span className="text-gradient-blue">Única</span>
+                <span className="text-gradient-yellow">SDR</span>
               </h1>
             </div>
             <p className="login-subtitle">
-              {isLogin ? 'Entre na sua conta' : 'Crie sua conta'}
+              Entre na sua conta
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
               <label htmlFor="email" className="form-label">
-                📧 Email
+                <Mail size={18} />
+                Email
               </label>
               <input
                 type="email"
@@ -89,7 +89,8 @@ const LoginPage: React.FC = () => {
 
             <div className="form-group">
               <label htmlFor="password" className="form-label">
-                🔒 Senha
+                <Lock size={18} />
+                Senha
               </label>
               <input
                 type="password"
@@ -105,7 +106,12 @@ const LoginPage: React.FC = () => {
 
             {message && (
               <div className={`message ${messageType}`}>
-                {messageType === 'success' ? '✅' : '❌'} {message}
+                {messageType === 'success' ? (
+                  <CheckCircle size={18} />
+                ) : (
+                  <XCircle size={18} />
+                )}
+                {message}
               </div>
             )}
 
@@ -115,45 +121,15 @@ const LoginPage: React.FC = () => {
               disabled={loading}
             >
               {loading ? (
-                <div className="loading-spinner"></div>
+                <Loader2 size={20} className="animate-spin" />
               ) : (
                 <>
-                  {isLogin ? '🚀 Entrar' : '✨ Criar Conta'}
+                  <Rocket size={20} />
+                  Entrar
                 </>
               )}
             </button>
           </form>
-
-          <div className="login-footer">
-            <p className="switch-text">
-              {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
-            </p>
-            <button
-              type="button"
-              className="switch-button"
-              onClick={() => setIsLogin(!isLogin)}
-            >
-              {isLogin ? 'Criar Conta' : 'Fazer Login'}
-            </button>
-          </div>
-        </div>
-
-        <div className="feature-cards">
-          <div className="feature-card">
-            <div className="feature-icon">🎮</div>
-            <h3>Interface Gamificada</h3>
-            <p>Experiência única e envolvente</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">⚡</div>
-            <h3>Super Rápido</h3>
-            <p>Carregamento instantâneo</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">🔐</div>
-            <h3>100% Seguro</h3>
-            <p>Seus dados protegidos</p>
-          </div>
         </div>
       </div>
     </div>
