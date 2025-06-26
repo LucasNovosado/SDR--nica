@@ -1,0 +1,272 @@
+.contador-container {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--dark-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  animation: slideIn 0.8s ease-out;
+}
+
+.contador-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.contador-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.contador-card {
+  background: rgba(26, 26, 26, 0.6);
+  border: 2px solid var(--dark-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.contador-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
+.contador-card.blue::before {
+  background: linear-gradient(90deg, var(--primary-blue), #0ea5e9);
+}
+
+.contador-card.green::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.contador-card:hover {
+  transform: translateY(-5px);
+}
+
+.contador-card.blue:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 15px 30px rgba(0, 212, 255, 0.15);
+}
+
+.contador-card.green:hover {
+  border-color: #10b981;
+  box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15);
+}
+
+.contador-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contador-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.contador-icon.blue {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(14, 165, 233, 0.1));
+  color: var(--primary-blue);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+}
+
+.contador-icon.green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1));
+  color: #10b981;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.1);
+}
+
+.contador-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  padding: 2px;
+  background: linear-gradient(135deg, currentColor, transparent);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  opacity: 0.3;
+}
+
+.contador-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.contador-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.contador-numero {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  text-shadow: 0 0 20px currentColor;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+.add-button:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.add-button.blue {
+  background: linear-gradient(135deg, var(--primary-blue), #0ea5e9);
+  color: white;
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+}
+
+.add-button.blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 212, 255, 0.4);
+}
+
+.add-button.green {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.add-button.green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+}
+
+.add-button:active {
+  transform: translateY(0);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .contador-container {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .contador-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .contador-card {
+    padding: 1.25rem;
+  }
+  
+  .contador-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .contador-numero {
+    font-size: 2rem;
+  }
+  
+  .add-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contador-container {
+    padding: 1rem;
+  }
+  
+  .contador-title {
+    font-size: 1.25rem;
+  }
+  
+  .contador-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .contador-info {
+    align-items: center;
+  }
+  
+  .contador-numero {
+    font-size: 1.75rem;
+  }
+  
+  .add-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}
