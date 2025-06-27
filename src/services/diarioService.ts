@@ -74,6 +74,8 @@ export const diarioService = {
   // ===== LEADS =====
   async getLeadsByLoja(lojaId: string, data?: string): Promise<Lead[]> {
     try {
+      console.log('🔍 Buscando leads para loja:', lojaId, 'data:', data)
+      
       let query = supabase
         .from('leads')
         .select('*')
@@ -86,13 +88,16 @@ export const diarioService = {
       const { data: leads, error } = await query.order('criado_em', { ascending: false })
 
       if (error) {
-        console.error('Erro ao buscar leads:', error)
+        console.error('❌ Erro ao buscar leads:', error)
         return []
       }
 
+      console.log('✅ Leads encontrados:', leads?.length || 0)
+      console.log('📋 Dados dos leads:', leads)
+
       return leads || []
     } catch (error) {
-      console.error('Erro ao buscar leads:', error)
+      console.error('❌ Erro ao buscar leads:', error)
       return []
     }
   },
@@ -102,7 +107,7 @@ export const diarioService = {
     tipo: 'whatsapp/telefone' | 'cliente físico'
   }): Promise<{ data: Lead | null; error: any }> {
     try {
-      console.log('Dados recebidos para criar lead:', leadData)
+      console.log('📝 Dados recebidos para criar lead:', leadData)
       
       const now = new Date()
       const data = now.toISOString().split('T')[0] // YYYY-MM-DD
@@ -117,7 +122,7 @@ export const diarioService = {
         tipo: leadData.tipo
       }
 
-      console.log('Dados que serão inseridos:', leadToInsert)
+      console.log('📤 Dados que serão inseridos:', leadToInsert)
 
       const { data: lead, error } = await supabase
         .from('leads')
@@ -126,23 +131,25 @@ export const diarioService = {
         .single()
 
       if (error) {
-        console.error('Erro detalhado ao criar lead:', error)
+        console.error('❌ Erro detalhado ao criar lead:', error)
         console.error('Código do erro:', error.code)
         console.error('Mensagem do erro:', error.message)
         console.error('Detalhes do erro:', error.details)
       } else {
-        console.log('Lead criado com sucesso:', lead)
+        console.log('✅ Lead criado com sucesso:', lead)
       }
 
       return { data: lead, error }
     } catch (error) {
-      console.error('Erro na função createLead:', error)
+      console.error('❌ Erro na função createLead:', error)
       return { data: null, error }
     }
   },
 
   async updateLeadConversao(leadId: string, convertido: boolean, motivoPerda?: string): Promise<{ data: Lead | null; error: any }> {
     try {
+      console.log('🔄 Atualizando conversão do lead:', leadId, 'convertido:', convertido, 'motivo:', motivoPerda)
+      
       const updateData: any = { convertido }
       
       if (!convertido && motivoPerda) {
@@ -159,19 +166,21 @@ export const diarioService = {
         .single()
 
       if (error) {
-        console.error('Erro ao atualizar lead:', error)
+        console.error('❌ Erro ao atualizar lead:', error)
+      } else {
+        console.log('✅ Lead atualizado com sucesso:', lead)
       }
 
       return { data: lead, error }
     } catch (error) {
-      console.error('Erro ao atualizar lead:', error)
+      console.error('❌ Erro ao atualizar lead:', error)
       return { data: null, error }
     }
   },
 
   async deleteLead(leadId: string): Promise<{ data: any; error: any }> {
     try {
-      console.log('Deletando lead:', leadId)
+      console.log('🗑️ Deletando lead:', leadId)
       
       const { data, error } = await supabase
         .from('leads')
@@ -180,17 +189,17 @@ export const diarioService = {
         .select()
 
       if (error) {
-        console.error('Erro ao deletar lead:', error)
+        console.error('❌ Erro ao deletar lead:', error)
         console.error('Código do erro:', error.code)
         console.error('Mensagem do erro:', error.message)
         console.error('Detalhes do erro:', error.details)
       } else {
-        console.log('Lead deletado com sucesso:', data)
+        console.log('✅ Lead deletado com sucesso:', data)
       }
 
       return { data, error }
     } catch (error) {
-      console.error('Erro na função deleteLead:', error)
+      console.error('❌ Erro na função deleteLead:', error)
       return { data: null, error }
     }
   },
@@ -201,7 +210,7 @@ export const diarioService = {
     hora?: string
   }): Promise<{ data: Lead | null; error: any }> {
     try {
-      console.log('Atualizando lead:', leadId, updateData)
+      console.log('📝 Atualizando lead:', leadId, updateData)
 
       const { data: lead, error } = await supabase
         .from('leads')
@@ -211,14 +220,14 @@ export const diarioService = {
         .single()
 
       if (error) {
-        console.error('Erro ao atualizar lead:', error)
+        console.error('❌ Erro ao atualizar lead:', error)
       } else {
-        console.log('Lead atualizado com sucesso:', lead)
+        console.log('✅ Lead atualizado com sucesso:', lead)
       }
 
       return { data: lead, error }
     } catch (error) {
-      console.error('Erro ao atualizar lead:', error)
+      console.error('❌ Erro ao atualizar lead:', error)
       return { data: null, error }
     }
   },
@@ -279,6 +288,8 @@ export const diarioService = {
   // ===== ESTATÍSTICAS =====
   async getEstatisticasDiarias(lojaId: string, data?: string) {
     try {
+      console.log('📊 Calculando estatísticas para loja:', lojaId, 'data:', data)
+      
       const dataFiltro = data || new Date().toISOString().split('T')[0]
       
       const leads = await this.getLeadsByLoja(lojaId, dataFiltro)
@@ -297,9 +308,11 @@ export const diarioService = {
         estatisticas.taxaConversao = (estatisticas.leadsConvertidos / estatisticas.totalLeads) * 100
       }
 
+      console.log('📊 Estatísticas calculadas:', estatisticas)
+
       return estatisticas
     } catch (error) {
-      console.error('Erro ao calcular estatísticas:', error)
+      console.error('❌ Erro ao calcular estatísticas:', error)
       return {
         totalLeads: 0,
         leadsWhatsapp: 0,

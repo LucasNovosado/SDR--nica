@@ -68,10 +68,8 @@ export const useDiario = () => {
 
     try {
       const { data, error } = await diarioService.createLead({
-        usuario_id: userWithLevel.id,
         loja_id: lojaSelecionada,
-        tipo,
-        origem: 'diario_loja'
+        tipo
       })
 
       if (error) {
