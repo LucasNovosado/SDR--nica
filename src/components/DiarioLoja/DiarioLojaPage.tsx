@@ -11,13 +11,12 @@ import {
   Store,
   ThumbsUp,
   ThumbsDown,
-  Trash2,
-  Calendar,
-  Filter
+  Trash2
 } from 'lucide-react'
 import MotivoPerdaModal from './MotivoPerdaModal'
 import AdicionarLeadModal from './AdicionarLeadModal'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
+import CalendarDateFilter from './CalendarDateFilter'
 import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
@@ -27,7 +26,8 @@ const DiarioLojaPage: React.FC = () => {
   const [lojas, setLojas] = useState<Loja[]>([])
   const [lojaSelecionada, setLojaSelecionada] = useState<string>('')
   const [leads, setLeads] = useState<Lead[]>([])
-  const [dataSelecionada, setDataSelecionada] = useState<string>(new Date().toISOString().split('T')[0])
+  const [dataInicio, setDataInicio] = useState<string>(new Date().toISOString().split('T')[0])
+  const [dataFim, setDataFim] = useState<string>(new Date().toISOString().split('T')[0])
   const [estatisticas, setEstatisticas] = useState({
     totalLeads: 0,
     leadsWhatsapp: 0,
@@ -66,7 +66,7 @@ const DiarioLojaPage: React.FC = () => {
         taxaConversao: 0
       })
     }
-  }, [lojaSelecionada, dataSelecionada])
+  }, [lojaSelecionada, dataInicio, dataFim])
 
   const carregarLojas = async () => {
     if (!userWithLevel) {
@@ -107,18 +107,18 @@ const DiarioLojaPage: React.FC = () => {
       return
     }
 
-    console.log('📊 Carregando dados da loja:', lojaSelecionada, 'para data:', dataSelecionada)
+    console.log('📊 Carregando dados da loja:', lojaSelecionada, 'período:', dataInicio, 'até', dataFim)
 
     try {
-      // Carregar leads
+      // Carregar leads por período
       console.log('🔍 Buscando leads...')
-      const leadsData = await diarioService.getLeadsByLoja(lojaSelecionada, dataSelecionada)
+      const leadsData = await diarioService.getLeadsByPeriodo(lojaSelecionada, dataInicio, dataFim)
       console.log('📋 Leads carregados:', leadsData.length, leadsData)
       setLeads(leadsData)
       
-      // Carregar estatísticas
+      // Carregar estatísticas por período
       console.log('📊 Calculando estatísticas...')
-      const stats = await diarioService.getEstatisticasDiarias(lojaSelecionada, dataSelecionada)
+      const stats = await diarioService.getEstatisticasPorPeriodo(lojaSelecionada, dataInicio, dataFim)
       console.log('📈 Estatísticas carregadas:', stats)
       setEstatisticas(stats)
     } catch (error) {
@@ -231,19 +231,36 @@ const DiarioLojaPage: React.FC = () => {
     return hora.substring(0, 5)
   }
 
-  const formatarDataExibicao = (data: string) => {
+  const handleDateRangeChange = (startDate: string, endDate: string) => {
+    console.log('📅 Período alterado:', startDate, 'até', endDate)
+    setDataInicio(startDate)
+    setDataFim(endDate)
+  }
+
+  const formatarDataExibicao = (dataInicio: string, dataFim: string) => {
     const hoje = new Date().toISOString().split('T')[0]
-    const ontem = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     
-    if (data === hoje) return 'Hoje'
-    if (data === ontem) return 'Ontem'
+    if (dataInicio === dataFim && dataInicio === hoje) return 'Hoje'
+    if (dataInicio === dataFim) {
+      const dataObj = new Date(dataInicio + 'T00:00:00')
+      return dataObj.toLocaleDateString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit',
+        year: 'numeric'
+      })
+    }
     
-    const dataObj = new Date(data + 'T00:00:00')
-    return dataObj.toLocaleDateString('pt-BR', { 
+    const inicioObj = new Date(dataInicio + 'T00:00:00')
+    const fimObj = new Date(dataFim + 'T00:00:00')
+    
+    return `${inicioObj.toLocaleDateString('pt-BR', { 
+      day: '2-digit', 
+      month: '2-digit'
+    })} - ${fimObj.toLocaleDateString('pt-BR', { 
       day: '2-digit', 
       month: '2-digit',
       year: 'numeric'
-    })
+    })}`
   }
 
   // Verificações de estado
@@ -289,7 +306,7 @@ const DiarioLojaPage: React.FC = () => {
             <option value="">Selecione uma loja</option>
             {lojas.map(loja => (
               <option key={loja.id} value={loja.id}>
-                {loja.nome} - {loja.cidade}
+                {loja.nome}
               </option>
             ))}
           </select>
@@ -301,7 +318,15 @@ const DiarioLojaPage: React.FC = () => {
           {/* Header da Loja */}
           <div className="loja-header">
             <h2>{loja.nome}</h2>
-            <p>{loja.cidade}, {loja.estado}</p>
+          </div>
+
+          {/* Filtro de Data */}
+          <div className="date-filter-section">
+            <CalendarDateFilter
+              onDateRangeChange={handleDateRangeChange}
+              initialStartDate={dataInicio}
+              initialEndDate={dataFim}
+            />
           </div>
 
           {/* Métricas Principais */}
@@ -329,24 +354,10 @@ const DiarioLojaPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Lista de Leads com Filtro de Data */}
+          {/* Lista de Leads */}
           <div className="leads-card">
             <div className="leads-header">
               <h3>Clientes ({leads.length})</h3>
-              <div className="date-filter">
-                <div className="filter-icon">
-                  <Filter size={18} />
-                </div>
-                <input
-                  type="date"
-                  value={dataSelecionada}
-                  onChange={(e) => setDataSelecionada(e.target.value)}
-                  className="date-input"
-                />
-                <div className="date-display">
-                  {formatarDataExibicao(dataSelecionada)}
-                </div>
-              </div>
             </div>
 
             {leads.length > 0 ? (
@@ -405,7 +416,7 @@ const DiarioLojaPage: React.FC = () => {
               <div className="empty-state">
                 <Users size={48} />
                 <h3>Nenhum cliente registrado</h3>
-                <p>Nenhum cliente foi registrado em {formatarDataExibicao(dataSelecionada)}</p>
+                <p>Nenhum cliente foi registrado no período de {formatarDataExibicao(dataInicio, dataFim)}</p>
               </div>
             )}
           </div>
