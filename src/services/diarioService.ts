@@ -23,6 +23,7 @@ export interface Lead {
 
 export interface Pontuacao {
   id: string
+  usuario_id: string
   loja_id: string
   data: string
   pontos: number
@@ -146,7 +147,13 @@ export const diarioService = {
     }
   },
 
-  async updateLeadConversao(leadId: string, convertido: boolean, motivoPerda?: string): Promise<{ data: Lead | null; error: any }> {
+  async updateLeadConversao(
+    leadId: string, 
+    convertido: boolean, 
+    motivoPerda?: string,
+    userId?: string,
+    lojaId?: string
+  ): Promise<{ data: Lead | null; error: any; pontosAdicionados?: boolean }> {
     try {
       console.log('🔄 Atualizando conversão do lead:', leadId, 'convertido:', convertido, 'motivo:', motivoPerda)
       
@@ -167,11 +174,26 @@ export const diarioService = {
 
       if (error) {
         console.error('❌ Erro ao atualizar lead:', error)
-      } else {
-        console.log('✅ Lead atualizado com sucesso:', lead)
+        return { data: null, error }
       }
 
-      return { data: lead, error }
+      console.log('✅ Lead atualizado com sucesso:', lead)
+
+      // Adicionar pontos para o usuário (tanto para conversão quanto para perda)
+      let pontosAdicionados = false
+      if (userId && lojaId) {
+        try {
+          console.log('🎯 Adicionando pontos para usuário:', userId)
+          const pontosResult = await this.adicionarPontosUsuario(userId, lojaId, 50)
+          pontosAdicionados = !pontosResult.error
+          console.log('🎯 Resultado dos pontos:', pontosResult)
+          console.log('🎯 Pontos adicionados com sucesso:', pontosAdicionados)
+        } catch (pontosError) {
+          console.error('❌ Erro ao adicionar pontos:', pontosError)
+        }
+      }
+
+      return { data: lead, error: null, pontosAdicionados }
     } catch (error) {
       console.error('❌ Erro ao atualizar lead:', error)
       return { data: null, error }
@@ -281,6 +303,44 @@ export const diarioService = {
       return { data: pontuacao, error }
     } catch (error) {
       console.error('Erro ao criar pontuação:', error)
+      return { data: null, error }
+    }
+  },
+
+  async adicionarPontosUsuario(
+    usuarioId: string, 
+    lojaId: string, 
+    pontos: number = 50
+  ): Promise<{ data: Pontuacao | null; error: any }> {
+    try {
+      console.log('🎯 [diarioService] Adicionando pontos para usuário:', usuarioId, 'loja:', lojaId, 'pontos:', pontos)
+      
+      const hoje = new Date().toISOString().split('T')[0]
+      
+      const pontuacaoData = {
+        usuario_id: usuarioId,
+        loja_id: lojaId,
+        data: hoje,
+        pontos
+      }
+
+      console.log('📤 [diarioService] Dados da pontuação:', pontuacaoData)
+
+      const { data: pontuacao, error } = await supabase
+        .from('pontuacoes')
+        .insert(pontuacaoData)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('❌ [diarioService] Erro ao adicionar pontos:', error)
+        return { data: null, error }
+      }
+
+      console.log('✅ [diarioService] Pontos adicionados com sucesso:', pontuacao)
+      return { data: pontuacao, error: null }
+    } catch (error) {
+      console.error('❌ [diarioService] Erro na função adicionarPontosUsuario:', error)
       return { data: null, error }
     }
   },

@@ -1,0 +1,321 @@
+.pontos-counter {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(13, 13, 20, 0.95);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 215, 0, 0.2);
+  border-radius: 16px;
+  padding: 1rem;
+  z-index: 9999;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  overflow: hidden;
+  min-width: 120px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 215, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.pontos-counter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 165, 0, 0.03) 100%);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.pontos-counter.loading {
+  min-width: 80px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pontos-loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 215, 0, 0.2);
+  border-top: 2px solid #ffd700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.pontos-counter:hover {
+  border-color: rgba(255, 215, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.pontos-counter.expanded {
+  min-width: 200px;
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.pontos-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.pontos-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  color: #ffd700;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.2));
+}
+
+.pontos-counter:hover .pontos-icon {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.2));
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.3));
+}
+
+.pontos-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.pontos-total {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffd700;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.pontos-counter:hover .pontos-total {
+  transform: scale(1.05);
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.pontos-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pontos-details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.pontos-counter.expanded .pontos-details {
+  max-height: 150px;
+  opacity: 1;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pontos-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.pontos-section:hover {
+  transform: translateX(4px);
+}
+
+.pontos-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.pontos-section-header svg {
+  color: #ffd700;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.2));
+}
+
+.pontos-section-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.nivel-progress {
+  margin-top: 1rem;
+}
+
+.nivel-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.nivel-progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+  animation: progressShimmer 2s ease-in-out infinite;
+}
+
+.nivel-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+  border-radius: 3px;
+  transition: width 0.6s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.nivel-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: progressGlow 1.5s ease-in-out infinite;
+}
+
+.nivel-progress-text {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Animações */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes progressShimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+@keyframes progressGlow {
+  0%, 100% { left: -100%; }
+  50% { left: 100%; }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .pontos-counter {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.875rem;
+    min-width: 100px;
+  }
+  
+  .pontos-counter.expanded {
+    min-width: 180px;
+  }
+  
+  .pontos-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .pontos-total {
+    font-size: 1.1rem;
+  }
+  
+  .pontos-label {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pontos-counter {
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.5rem;
+    min-width: 90px;
+  }
+  
+  .pontos-counter.expanded {
+    min-width: 160px;
+  }
+  
+  .pontos-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .pontos-total {
+    font-size: .9rem;
+  }
+  
+  .pontos-section {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Efeitos especiais para grandes conquistas */
+.pontos-counter.achievement {
+  animation: achievementPulse 0.6s ease-in-out;
+}
+
+@keyframes achievementPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 215, 0, 0.1);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(255, 215, 0, 0.3);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pontos-counter {
+    background: rgba(13, 13, 20, 0.98);
+    border-color: rgba(255, 215, 0, 0.25);
+  }
+}

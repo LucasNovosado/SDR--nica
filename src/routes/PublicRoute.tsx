@@ -9,18 +9,13 @@ interface PublicRouteProps {
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
   const { user, loading } = useAuth()
 
-  // Se ainda está carregando, mostra loading
+  // Se ainda está carregando (não deveria chegar aqui com a nova estrutura)
   if (loading) {
     return (
       <div className="loading-container">
         <div className="loading-content">
-          <div className="loading-logo">
-            <span className="logo-icon">⚡</span>
-            <span className="text-gradient-blue">Única</span>
-            <span className="text-gradient-yellow">PRO</span>
-          </div>
           <div className="loading-spinner"></div>
-          <p className="loading-text">Carregando...</p>
+          <p className="loading-text">Verificando autenticação...</p>
         </div>
       </div>
     )

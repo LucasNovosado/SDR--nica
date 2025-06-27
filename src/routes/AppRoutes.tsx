@@ -7,8 +7,28 @@ import DiarioLojaPage from '../components/DiarioLoja/DiarioLojaPage'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 
+// Componente de Loading centralizado
+const AppLoading = () => (
+  <div className="loading-container">
+    <div className="loading-content">
+      <div className="loading-logo">
+        <span className="logo-icon">⚡</span>
+        <span className="text-gradient-blue">Única</span>
+        <span className="text-gradient-yellow">PRO</span>
+      </div>
+      <div className="loading-spinner"></div>
+      <p className="loading-text">Carregando aplicação...</p>
+    </div>
+  </div>
+)
+
 const AppRoutes = () => {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+
+  // Loading global da aplicação
+  if (loading) {
+    return <AppLoading />
+  }
 
   return (
     <Routes>

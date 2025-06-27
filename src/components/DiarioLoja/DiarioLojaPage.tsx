@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { usePontos } from '../../hooks/usePontos'
 import { diarioService, Loja, Lead } from '../../services/diarioService'
 import { 
   ArrowLeft,
@@ -16,11 +17,14 @@ import {
 import MotivoPerdaModal from './MotivoPerdaModal'
 import AdicionarLeadModal from './AdicionarLeadModal'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
+import PontosRewardModal from '../PontosCounter/PontosRewardModal'
+import PontosCounter from '../../components/PontosCounter/PontosCounter'
 import CalendarDateFilter from './CalendarDateFilter'
 import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
   const { userWithLevel } = useAuth()
+  const { atualizarPontos, adicionarPontosInstantaneo } = usePontos() // <- MODIFICADO: Adicionado adicionarPontosInstantaneo
   const navigate = useNavigate()
   
   const [lojas, setLojas] = useState<Loja[]>([])
@@ -38,11 +42,21 @@ const DiarioLojaPage: React.FC = () => {
     taxaConversao: 0
   })
   const [loading, setLoading] = useState(true)
+  
+  // Estados dos modais
   const [showMotivoPerdaModal, setShowMotivoPerdaModal] = useState(false)
   const [showAdicionarLeadModal, setShowAdicionarLeadModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  
+  // Estados para controle dos modais
   const [leadSelecionado, setLeadSelecionado] = useState<string>('')
   const [leadParaDeletar, setLeadParaDeletar] = useState<Lead | null>(null)
+  const [rewardData, setRewardData] = useState({
+    pontosGanhos: 50,
+    leadTipo: '',
+    leadConvertido: undefined as boolean | undefined
+  })
 
   useEffect(() => {
     console.log('🔄 useEffect - userWithLevel mudou:', userWithLevel)
@@ -168,34 +182,80 @@ const DiarioLojaPage: React.FC = () => {
     console.log('🔄 Alterando conversão do lead:', leadId, 'para:', convertido)
     
     if (convertido) {
-      try {
-        const { error } = await diarioService.updateLeadConversao(leadId, true)
-        if (!error) {
-          await carregarDadosLoja()
-        }
-      } catch (error) {
-        console.error('❌ Erro ao converter lead:', error)
-      }
+      await confirmarConversao(leadId, convertido)
     } else {
       setLeadSelecionado(leadId)
       setShowMotivoPerdaModal(true)
     }
   }
 
+  // ===== FUNÇÃO MODIFICADA: confirmarConversao =====
+  const confirmarConversao = async (leadId: string, convertido: boolean, motivo?: string) => {
+    try {
+      if (!userWithLevel?.id || !lojaSelecionada) {
+        console.error('❌ Dados do usuário ou loja não disponíveis')
+        return
+      }
+
+      console.log('🔄 [DiarioLoja] Confirmando conversão:', { leadId, convertido, motivo })
+
+      // Buscar dados do lead antes da atualização para o modal de recompensa
+      const leadAtual = leads.find(lead => lead.id === leadId)
+      
+      // *** NOVO: Update instantâneo dos pontos ANTES da chamada para o servidor ***
+      console.log('🚀 [DiarioLoja] Atualizando pontos instantaneamente...')
+      adicionarPontosInstantaneo(50)
+      
+      const { error, pontosAdicionados } = await diarioService.updateLeadConversao(
+        leadId, 
+        convertido, 
+        motivo,
+        userWithLevel.id,
+        lojaSelecionada
+      )
+      
+      if (!error) {
+        console.log('✅ [DiarioLoja] Conversão atualizada com sucesso')
+        
+        // Recarregar dados da loja
+        console.log('🔄 [DiarioLoja] Recarregando dados da loja...')
+        await carregarDadosLoja()
+        
+        // *** NOVO: Mostrar modal de recompensa IMEDIATAMENTE (sem setTimeout) ***
+        console.log('🎉 [DiarioLoja] Exibindo modal de recompensa')
+        setRewardData({
+          pontosGanhos: 50,
+          leadTipo: leadAtual?.tipo || '',
+          leadConvertido: convertido
+        })
+        setShowRewardModal(true)
+        
+      } else {
+        console.error('❌ Erro ao atualizar conversão:', error)
+        
+        // *** NOVO: Reverter os pontos em caso de erro ***
+        console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
+        adicionarPontosInstantaneo(-50)
+        
+        alert('Erro ao atualizar lead')
+      }
+    } catch (error) {
+      console.error('❌ Erro ao confirmar conversão:', error)
+      
+      // *** NOVO: Reverter os pontos em caso de erro ***
+      console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
+      adicionarPontosInstantaneo(-50)
+      
+      alert('Erro inesperado ao atualizar lead')
+    }
+  }
+
   const handleMotivoPerdaConfirm = async (motivo: string) => {
     console.log('💼 Registrando motivo de perda:', motivo, 'para lead:', leadSelecionado)
     
-    try {
-      const { error } = await diarioService.updateLeadConversao(leadSelecionado, false, motivo)
-      if (!error) {
-        await carregarDadosLoja()
-      }
-    } catch (error) {
-      console.error('❌ Erro ao registrar perda:', error)
-    } finally {
-      setShowMotivoPerdaModal(false)
-      setLeadSelecionado('')
-    }
+    await confirmarConversao(leadSelecionado, false, motivo)
+    setShowMotivoPerdaModal(false)
+    setLeadSelecionado('')
   }
 
   const handleDeleteLead = (lead: Lead) => {
@@ -285,6 +345,9 @@ const DiarioLojaPage: React.FC = () => {
 
   return (
     <div className="diario-container">
+      {/* Contador de Pontos Fixo */}
+      <PontosCounter />
+
       <div className="diario-header">
         <div className="header-left">
           <button className="back-button" onClick={() => navigate('/menu')}>
@@ -471,6 +534,14 @@ const DiarioLojaPage: React.FC = () => {
         leadHora={leadParaDeletar ? formatarHora(leadParaDeletar.hora) : ''}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={confirmDeleteLead}
+      />
+
+      <PontosRewardModal
+        isOpen={showRewardModal}
+        pontosGanhos={rewardData.pontosGanhos}
+        leadTipo={rewardData.leadTipo}
+        leadConvertido={rewardData.leadConvertido}
+        onClose={() => setShowRewardModal(false)}
       />
     </div>
   )
