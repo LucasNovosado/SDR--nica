@@ -17,17 +17,17 @@ const LeadsSummaryCards: React.FC<Props> = ({ estatisticas, motivoMaisFrequente,
         <div className="cardTitulo">Leads Totais</div>
         <div className="cardValor">{estatisticas.totalLeads}</div>
       </div>
-      <div className="cardResumo">
+      <div className="cardResumo cardResumoVerde">
         <div className="cardTitulo">Convertidos</div>
-        <div className="cardValor">{estatisticas.leadsConvertidos}</div>
+        <div className="cardValor cardValorVerde">{estatisticas.leadsConvertidos}</div>
       </div>
-      <div className="cardResumo">
-        <div className="cardTitulo">Taxa de Conversão</div>
-        <div className="cardValor">{estatisticas.taxaConversao?.toFixed(1)}%</div>
-      </div>
-      <div className="cardResumo">
+      <div className="cardResumo cardResumoVermelho">
         <div className="cardTitulo">Perdidos</div>
-        <div className="cardValor">{estatisticas.leadsPerdidos}</div>
+        <div className="cardValor cardValorVermelho">{estatisticas.leadsPerdidos}</div>
+      </div>
+      <div className="cardResumo cardResumoAmarelo">
+        <div className="cardTitulo">Taxa de Conversão</div>
+        <div className="cardValor cardValorAmarelo">{estatisticas.taxaConversao?.toFixed(1)}%</div>
       </div>
       <div className="cardResumoDestaque">
         <div className="cardTitulo">Principal motivo de perda</div>

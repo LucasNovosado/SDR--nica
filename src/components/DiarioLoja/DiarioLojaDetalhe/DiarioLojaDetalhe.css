@@ -624,6 +624,36 @@ label {
   }
 }
 
+@media (max-width: 600px) {
+  .chartsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem;
+  }
+  .chartTypesGrid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+  .chartTypeCard {
+    min-width: 0;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .tabelaContainer {
+    overflow-x: auto;
+    padding: 0.5rem;
+    border-radius: 12px;
+  }
+  .tabelaLeads {
+    min-width: 600px;
+    font-size: 0.85rem;
+  }
+  .tabelaLeads th, .tabelaLeads td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+}
+
 .paginacaoLeads {
   display: flex;
   justify-content: center;
@@ -701,4 +731,43 @@ label {
 .stat-conversao {
   color: #00d4ff;
   font-weight: 700;
+}
+
+.cardResumoVerde {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(52, 211, 153, 0.13) 100%) !important;
+  color: #1db67c !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.10);
+}
+.cardResumoVerde .cardTitulo {
+  color: #6ee7b7 !important;
+}
+.cardValorVerde {
+  color: #1db67c !important;
+  text-shadow: none;
+}
+
+.cardResumoVermelho {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(248, 113, 113, 0.10) 100%) !important;
+  color: #e23b3b !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.10);
+}
+.cardResumoVermelho .cardTitulo {
+  color: #fecaca !important;
+}
+.cardValorVermelho {
+  color: #e23b3b !important;
+  text-shadow: none;
+}
+
+.cardResumoAmarelo {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(253, 230, 138, 0.10) 100%) !important;
+  color: #bfa91a !important;
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.10);
+}
+.cardResumoAmarelo .cardTitulo {
+  color: #fef9c3 !important;
+}
+.cardValorAmarelo {
+  color: #ffde05ce !important;
+  text-shadow: none;
 }

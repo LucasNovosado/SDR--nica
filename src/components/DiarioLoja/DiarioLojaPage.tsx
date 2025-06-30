@@ -59,6 +59,11 @@ const DiarioLojaPage: React.FC = () => {
     leadConvertido: undefined as boolean | undefined
   })
 
+  const [paginaLeads, setPaginaLeads] = useState(1)
+  const leadsPorPagina = 5
+  const totalPaginasLeads = Math.ceil(leads.length / leadsPorPagina)
+  const leadsPaginados = leads.slice((paginaLeads - 1) * leadsPorPagina, paginaLeads * leadsPorPagina)
+
   useEffect(() => {
     if (authLoading) {
       setIsCheckingSession(true)
@@ -427,8 +432,8 @@ const DiarioLojaPage: React.FC = () => {
                 <div className="metric-label">Conversão</div>
               </div>
             </div>
-            {/* Botão Relatório Detalhado */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+            {/* Botão Relatório Detalhado centralizado */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
               <button
                 className="diario-detalhe-btn"
                 style={{
@@ -459,7 +464,7 @@ const DiarioLojaPage: React.FC = () => {
 
             {leads.length > 0 ? (
               <div className="leads-list">
-                {leads.map((lead) => (
+                {leadsPaginados.map((lead) => (
                   <div key={lead.id} className={`lead-item ${lead.convertido === true ? 'success' : lead.convertido === false ? 'danger' : 'pending'}`}>
                     <div className="lead-info">
                       <div className="lead-tipo">
@@ -514,6 +519,19 @@ const DiarioLojaPage: React.FC = () => {
                 <Users size={48} />
                 <h3>Nenhum cliente registrado</h3>
                 <p>Nenhum cliente foi registrado no período de {formatarDataExibicao(dataInicio, dataFim)}</p>
+              </div>
+            )}
+
+            {/* Paginação dos leads */}
+            {totalPaginasLeads > 1 && (
+              <div className="paginacaoLeads" style={{marginTop: 16}}>
+                <button onClick={() => setPaginaLeads(p => Math.max(1, p - 1))} disabled={paginaLeads === 1}>
+                  Anterior
+                </button>
+                <span>Página {paginaLeads} de {totalPaginasLeads}</span>
+                <button onClick={() => setPaginaLeads(p => Math.min(totalPaginasLeads, p + 1))} disabled={paginaLeads === totalPaginasLeads}>
+                  Próxima
+                </button>
               </div>
             )}
           </div>

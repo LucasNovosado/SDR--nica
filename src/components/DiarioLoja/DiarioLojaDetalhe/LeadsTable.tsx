@@ -67,4 +67,4 @@ const LeadsTable: React.FC<Props> = ({ leads, lojas, usuarios, loading }) => {
   )
 }
 
-export default LeadsTable
+export default LeadsTable 

@@ -42,19 +42,7 @@ const MenuPage: React.FC = () => {
       // Todos os usuários podem ver este módulo
       visible: true
     },
-    {
-      id: 'module2', 
-      title: 'Módulo 2',
-      description: 'Segundo módulo do sistema',
-      icon: Users,
-      color: 'yellow',
-      onClick: () => {
-        console.log('Módulo 2 clicado')
-        // navigate('/modulo2')
-      },
-      // Todos os usuários podem ver este módulo
-      visible: true
-    },
+
     {
       id: 'module3',
       title: 'Configurações', 
