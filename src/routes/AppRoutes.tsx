@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import LoginPage from '../components/Auth/LoginPage'
 import MenuPage from '../components/Menu/MenuPage'
 import DiarioLojaPage from '../components/DiarioLoja/DiarioLojaPage'
+import DiarioLojaDetalhePage from '../components/DiarioLoja/DiarioLojaDetalhe/DiarioLojaDetalhePage'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 
@@ -55,6 +56,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <DiarioLojaPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/diario/detalhe"
+        element={
+          <ProtectedRoute>
+            <DiarioLojaDetalhePage />
           </ProtectedRoute>
         }
       />

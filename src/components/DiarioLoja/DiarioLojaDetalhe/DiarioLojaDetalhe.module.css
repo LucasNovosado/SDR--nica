@@ -1,0 +1,625 @@
+.detalheContainer {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+    position: relative;
+    color: #ffffff;
+    font-family: 'Inter', 'Nunito', 'Poppins', sans-serif;
+    padding: 2.5rem 2rem 4rem 2rem;
+    box-sizing: border-box;
+  }
+  
+  .detalheContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .titulo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 25%, #00d4ff 75%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .titulo::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #8b5cf6, #00d4ff);
+    border-radius: 2px;
+  }
+  
+  /* Cards de resumo aprimorados */
+  .cardsGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .cardResumo {
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px rgba(139, 92, 246, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  
+  .cardResumo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+  }
+  
+  .cardResumo:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      0 1px 0 rgba(255, 255, 255, 0.1) inset,
+      0 0 0 1px rgba(139, 92, 246, 0.2);
+  }
+  
+  .cardResumoDestaque {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 25%, #00d4ff 75%, #0284c7 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    box-shadow: 
+      0 8px 32px rgba(139, 92, 246, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.2) inset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+  
+  .cardResumoDestaque::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  
+  .cardResumoDestaque:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(139, 92, 246, 0.4),
+      0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  }
+  
+  .cardTitulo {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #a78bfa;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+  
+  .cardResumoDestaque .cardTitulo {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+  }
+  
+  .cardValor {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    line-height: 1;
+  }
+  
+  .cardResumoDestaque .cardValor {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  /* Filtros modernizados */
+  .filtrosContainer {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px rgba(139, 92, 246, 0.1);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .filtrosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .filtroItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .inputFiltro {
+    background: rgba(26, 26, 46, 0.9);
+    border: 1.5px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    color: #ffffff;
+    font-family: 'Inter', 'Nunito', 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+  }
+  
+  .inputFiltro option {
+    background: #1a1a2e;
+    color: #ffffff;
+    padding: 0.5rem;
+    border: none;
+  }
+  
+  .inputFiltro option:hover,
+  .inputFiltro option:focus,
+  .inputFiltro option:checked {
+    background: #8b5cf6;
+    color: #ffffff;
+  }
+  
+  .inputFiltro:focus {
+    border-color: #8b5cf6;
+    background: rgba(26, 26, 46, 0.95);
+    box-shadow: 
+      0 0 0 3px rgba(139, 92, 246, 0.15),
+      0 4px 12px rgba(139, 92, 246, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  .inputFiltro:hover {
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(26, 26, 46, 0.95);
+  }
+  
+  label {
+    font-size: 0.8125rem;
+    color: #a78bfa;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Gráficos modernizados */
+  .chartsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .chartCard {
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px rgba(0, 212, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .chartCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
+  }
+  
+  .chartCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 16px 40px rgba(0, 0, 0, 0.4),
+      0 1px 0 rgba(255, 255, 255, 0.1) inset,
+      0 0 0 1px rgba(0, 212, 255, 0.2);
+  }
+  
+  .chartTitulo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #00d4ff;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    letter-spacing: -0.025em;
+  }
+  
+  .chartPlaceholder {
+    width: 100%;
+    min-height: 220px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
+    border-radius: 16px;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .chartPlaceholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+  
+  /* Estilos específicos para dados de gráficos */
+  .chartData {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 1;
+    position: relative;
+  }
+  
+  .chartDataItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(139, 92, 246, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    transition: all 0.2s ease;
+  }
+  
+  .chartDataItem:hover {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.25);
+    transform: translateX(4px);
+  }
+  
+  .chartDataLabel {
+    font-weight: 600;
+    color: #a78bfa;
+    text-align: left;
+    line-height: 1.4;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .chartDataValue {
+    font-weight: 700;
+    color: #00d4ff;
+    font-size: 1.125rem;
+    text-align: right;
+    align-self: flex-end;
+  }
+  
+  .chartDataBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+  
+  .chartDataProgress {
+    flex: 1;
+    height: 6px;
+    background: rgba(139, 92, 246, 0.15);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .chartDataProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #00d4ff);
+    border-radius: 3px;
+    transition: width 0.6s ease;
+    position: relative;
+  }
+  
+  .chartDataProgressFill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShimmer 2s infinite;
+  }
+  
+  @keyframes progressShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  /* Layout específico para tipos de lead */
+  .chartTypesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .chartTypeCard {
+    background: rgba(0, 212, 255, 0.08);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .chartTypeCard:hover {
+    background: rgba(0, 212, 255, 0.12);
+    border-color: rgba(0, 212, 255, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .chartTypeIcon {
+    margin-bottom: 0.5rem;
+    color: #00d4ff;
+    opacity: 0.9;
+  }
+  
+  .chartTypeLabel {
+    font-size: 0.75rem;
+    color: #a78bfa;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+  
+  .chartTypeValue {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #00d4ff;
+  }
+  
+  /* Estilo para quando não há dados */
+  .chartNoData {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: #6b7280;
+    font-style: italic;
+  }
+  
+  .chartNoDataIcon {
+    opacity: 0.5;
+    color: #8b5cf6;
+  }
+  
+  /* Tabela premium */
+  .tabelaContainer {
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 0 0 1px rgba(0, 212, 255, 0.1);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .tabelaContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
+  }
+  
+  .tabelaLeads {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    color: #ffffff;
+    border-spacing: 0;
+  }
+  
+  .tabelaLeads th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    color: #00d4ff;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(0, 212, 255, 0.08) 100%);
+    border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  
+  .tabelaLeads td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+    font-weight: 500;
+    vertical-align: middle;
+  }
+  
+  .tabelaLeads tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .tabelaLeads tbody tr {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .tabelaLeads tbody tr:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(0, 212, 255, 0.08) 100%);
+    transform: scale(1.005);
+  }
+  
+  /* Responsividade aprimorada */
+  @media (max-width: 1024px) {
+    .detalheContainer {
+      padding: 2rem 1.5rem 3rem 1.5rem;
+    }
+    
+    .titulo {
+      font-size: 2.25rem;
+    }
+    
+    .cardsGrid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+    
+    .chartsGrid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .detalheContainer {
+      padding: 1.5rem 1rem 2.5rem 1rem;
+    }
+    
+    .titulo {
+      font-size: 1.875rem;
+      margin-bottom: 2rem;
+    }
+    
+    .cardsGrid, .chartsGrid, .filtrosGrid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .cardResumo, .cardResumoDestaque {
+      padding: 1.5rem 1rem;
+    }
+    
+    .cardValor {
+      font-size: 2rem;
+    }
+    
+    .filtrosContainer {
+      padding: 1.5rem;
+      border-radius: 20px;
+    }
+    
+    .chartCard, .tabelaContainer {
+      padding: 1.5rem;
+      border-radius: 20px;
+    }
+    
+    .tabelaContainer {
+      overflow-x: auto;
+    }
+    
+    .tabelaLeads th, .tabelaLeads td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.8125rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .detalheContainer {
+      padding: 1rem 0.75rem 2rem 0.75rem;
+    }
+    
+    .titulo {
+      font-size: 1.5rem;
+    }
+    
+    .cardResumo, .cardResumoDestaque {
+      padding: 1.25rem 0.75rem;
+    }
+    
+    .cardValor {
+      font-size: 1.75rem;
+    }
+    
+    .filtrosContainer, .chartCard, .tabelaContainer {
+      padding: 1.25rem;
+      border-radius: 16px;
+    }
+  }

@@ -427,6 +427,28 @@ const DiarioLojaPage: React.FC = () => {
                 <div className="metric-label">Conversão</div>
               </div>
             </div>
+            {/* Botão Relatório Detalhado */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+              <button
+                className="diario-detalhe-btn"
+                style={{
+                  background: 'linear-gradient(90deg, #8b5cf6 0%, #00d4ff 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '8px 20px',
+                  fontWeight: 700,
+                  fontFamily: 'Poppins, Nunito, sans-serif',
+                  fontSize: 15,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(139,92,246,0.12)',
+                  transition: 'all 0.3s',
+                }}
+                onClick={() => navigate('/diario/detalhe')}
+              >
+                Relatório Detalhado
+              </button>
+            </div>
           </div>
 
           {/* Lista de Leads */}
