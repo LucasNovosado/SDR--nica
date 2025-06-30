@@ -1,7 +1,7 @@
 .pontos-counter {
   position: fixed;
   top: 1.5rem;
-  left: 1.5rem;
+  right: 1.5rem;
   background: rgba(13, 13, 20, 0.95);
   backdrop-filter: blur(20px);
   border: 2px solid rgba(255, 215, 0, 0.2);
@@ -242,9 +242,9 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .pontos-counter {
-    top: 1rem;
-    left: 1rem;
-    padding: 0.875rem;
+    top: .5rem;
+    right: 1rem;
+    padding: 0.6rem;
     min-width: 100px;
   }
   
