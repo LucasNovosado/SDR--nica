@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import { usePontos } from '../../hooks/usePontos'
+import { usePointsStore } from '../../store/usePointsStore'
 import { diarioService, Loja, Lead } from '../../services/diarioService'
 import { 
   ArrowLeft,
@@ -24,7 +24,7 @@ import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
   const { userWithLevel } = useAuth()
-  const { atualizarPontos, adicionarPontosInstantaneo } = usePontos() // <- MODIFICADO: Adicionado adicionarPontosInstantaneo
+  const { adicionarPontos } = usePointsStore()
   const navigate = useNavigate()
   
   const [lojas, setLojas] = useState<Loja[]>([])
@@ -202,9 +202,8 @@ const DiarioLojaPage: React.FC = () => {
       // Buscar dados do lead antes da atualização para o modal de recompensa
       const leadAtual = leads.find(lead => lead.id === leadId)
       
-      // *** NOVO: Update instantâneo dos pontos ANTES da chamada para o servidor ***
-      console.log('🚀 [DiarioLoja] Atualizando pontos instantaneamente...')
-      adicionarPontosInstantaneo(50)
+      // Atualiza pontos globalmente (reativo)
+      await adicionarPontos(50)
       
       const { error, pontosAdicionados } = await diarioService.updateLeadConversao(
         leadId, 
@@ -233,18 +232,16 @@ const DiarioLojaPage: React.FC = () => {
       } else {
         console.error('❌ Erro ao atualizar conversão:', error)
         
-        // *** NOVO: Reverter os pontos em caso de erro ***
-        console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
-        adicionarPontosInstantaneo(-50)
+        // Reverte pontos em caso de erro
+        await adicionarPontos(-50)
         
         alert('Erro ao atualizar lead')
       }
     } catch (error) {
       console.error('❌ Erro ao confirmar conversão:', error)
       
-      // *** NOVO: Reverter os pontos em caso de erro ***
-      console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
-      adicionarPontosInstantaneo(-50)
+      // Reverte pontos em caso de erro
+      await adicionarPontos(-50)
       
       alert('Erro inesperado ao atualizar lead')
     }
