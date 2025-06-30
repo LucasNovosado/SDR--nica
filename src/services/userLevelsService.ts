@@ -182,5 +182,28 @@ export const userLevelsService = {
     
     // Outros níveis só podem acessar sua própria loja
     return userLojaId === targetLojaId
+  },
+
+  async criarUsuarioComRegra({ nome, email, senha, nivel, loja_id }: { nome: string, email: string, senha: string, nivel: UserLevel, loja_id?: string }) {
+    // 1. Cria usuário no Auth
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password: senha
+    })
+    if (signUpError || !signUpData.user) {
+      throw new Error(signUpError?.message || 'Erro ao criar usuário no Auth')
+    }
+    // 2. Insere dados adicionais na tabela users_regras
+    const { data: regraData, error: regraError } = await supabase.from('users_regras').insert({
+      user_ref: signUpData.user.id,
+      nome,
+      email,
+      nivel,
+      loja_id: loja_id || null
+    })
+    if (regraError) {
+      throw new Error(regraError.message || 'Erro ao salvar dados adicionais do usuário')
+    }
+    return { user: signUpData.user, regra: regraData }
   }
 }

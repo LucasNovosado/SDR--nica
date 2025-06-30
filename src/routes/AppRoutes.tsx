@@ -7,6 +7,7 @@ import DiarioLojaPage from '../components/DiarioLoja/DiarioLojaPage'
 import DiarioLojaDetalhePage from '../components/DiarioLoja/DiarioLojaDetalhe/DiarioLojaDetalhePage'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
+import ConfiguracoesPage from '../components/ConfiguracoesPage/ConfiguracoesPage'
 
 // Componente de Loading centralizado
 const AppLoading = () => (
@@ -65,6 +66,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <DiarioLojaDetalhePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/configuracoes"
+        element={
+          <ProtectedRoute>
+            <ConfiguracoesPage />
           </ProtectedRoute>
         }
       />

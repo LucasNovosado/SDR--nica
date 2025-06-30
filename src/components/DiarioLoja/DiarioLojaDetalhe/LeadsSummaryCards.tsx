@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './DiarioLojaDetalhe.module.css'
+import './DiarioLojaDetalhe.css'
 
 type Props = {
   estatisticas: any
@@ -9,32 +9,32 @@ type Props = {
 
 const LeadsSummaryCards: React.FC<Props> = ({ estatisticas, motivoMaisFrequente, loading }) => {
   if (loading || !estatisticas) {
-    return <div className={styles.cardsGrid}>Carregando...</div>
+    return <div className="cardsGrid">Carregando...</div>
   }
   return (
-    <div className={styles.cardsGrid}>
-      <div className={styles.cardResumo}>
-        <div className={styles.cardTitulo}>Leads Totais</div>
-        <div className={styles.cardValor}>{estatisticas.totalLeads}</div>
+    <div className="cardsGrid">
+      <div className="cardResumo">
+        <div className="cardTitulo">Leads Totais</div>
+        <div className="cardValor">{estatisticas.totalLeads}</div>
       </div>
-      <div className={styles.cardResumo}>
-        <div className={styles.cardTitulo}>Convertidos</div>
-        <div className={styles.cardValor}>{estatisticas.leadsConvertidos}</div>
+      <div className="cardResumo">
+        <div className="cardTitulo">Convertidos</div>
+        <div className="cardValor">{estatisticas.leadsConvertidos}</div>
       </div>
-      <div className={styles.cardResumo}>
-        <div className={styles.cardTitulo}>Taxa de Conversão</div>
-        <div className={styles.cardValor}>{estatisticas.taxaConversao?.toFixed(1)}%</div>
+      <div className="cardResumo">
+        <div className="cardTitulo">Taxa de Conversão</div>
+        <div className="cardValor">{estatisticas.taxaConversao?.toFixed(1)}%</div>
       </div>
-      <div className={styles.cardResumo}>
-        <div className={styles.cardTitulo}>Perdidos</div>
-        <div className={styles.cardValor}>{estatisticas.leadsPerdidos}</div>
+      <div className="cardResumo">
+        <div className="cardTitulo">Perdidos</div>
+        <div className="cardValor">{estatisticas.leadsPerdidos}</div>
       </div>
-      <div className={styles.cardResumoDestaque}>
-        <div className={styles.cardTitulo}>Principal motivo de perda</div>
-        <div className={styles.cardValor}>{motivoMaisFrequente}</div>
+      <div className="cardResumoDestaque">
+        <div className="cardTitulo">Principal motivo de perda</div>
+        <div className="cardValor">{motivoMaisFrequente}</div>
       </div>
     </div>
   )
 }
 
-export default LeadsSummaryCards 
+export default LeadsSummaryCards

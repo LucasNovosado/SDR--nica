@@ -1,0 +1,34 @@
+table_name,column_name,data_type,is_nullable,column_default
+feedbacks_padrao,id,uuid,NO,gen_random_uuid()
+feedbacks_padrao,texto,text,NO,null
+feedbacks_padrao,ativo,boolean,YES,true
+leads,id,uuid,NO,gen_random_uuid()
+leads,loja_id,uuid,YES,null
+leads,data,date,NO,CURRENT_DATE
+leads,hora,time without time zone,NO,CURRENT_TIME
+leads,convertido,boolean,YES,null
+leads,motivo_perda,text,YES,null
+leads,criado_em,timestamp without time zone,YES,now()
+leads,tipo,text,YES,null
+lojas,id,uuid,NO,gen_random_uuid()
+lojas,nome,text,NO,null
+lojas,cidade,text,NO,null
+lojas,estado,text,NO,null
+lojas,populacao,integer,NO,null
+lojas,criado_em,timestamp without time zone,YES,now()
+lojas,supervisor,uuid,YES,gen_random_uuid()
+pontuacoes,id,uuid,NO,gen_random_uuid()
+pontuacoes,usuario_id,uuid,YES,null
+pontuacoes,loja_id,uuid,YES,null
+pontuacoes,data,date,NO,CURRENT_DATE
+pontuacoes,pontos,integer,NO,1
+pontuacoes,criado_em,timestamp without time zone,YES,now()
+users_regras,id,uuid,NO,gen_random_uuid()
+users_regras,nome,text,YES,null
+users_regras,email,text,YES,null
+users_regras,nivel,text,YES,null
+users_regras,criado_em,timestamp without time zone,YES,now()
+users_regras,user_ref,uuid,YES,null
+users_regras,created_at,timestamp without time zone,YES,now()
+users_regras,updated_at,timestamp without time zone,YES,now()
+users_regras,loja_id,uuid,YES,null

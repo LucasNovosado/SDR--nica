@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './DiarioLojaDetalhe.module.css'
+import './DiarioLojaDetalhe.css'
 import LeadsSummaryCards from './LeadsSummaryCards'
 import LeadsFilters from './LeadsFilters'
 import LeadsCharts from './LeadsCharts'
@@ -10,8 +10,8 @@ const DiarioLojaDetalhePage: React.FC = () => {
   const detalhe = useDiarioDetalhe()
 
   return (
-    <div className={styles.detalheContainer}>
-      <h1 className={styles.titulo}>Relatório Detalhado de Leads</h1>
+    <div className="detalheContainer">
+      <h1 className="titulo">Relatório Detalhado de Leads</h1>
       <LeadsSummaryCards estatisticas={detalhe.estatisticas} motivoMaisFrequente={detalhe.motivoMaisFrequente} loading={detalhe.loading} />
       <LeadsFilters
         filtros={detalhe.filtros}
@@ -31,4 +31,4 @@ const DiarioLojaDetalhePage: React.FC = () => {
   )
 }
 
-export default DiarioLojaDetalhePage 
+export default DiarioLojaDetalhePage

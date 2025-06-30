@@ -62,9 +62,7 @@ const MenuPage: React.FC = () => {
       icon: Settings,
       color: 'blue',
       onClick: () => {
-        console.log('Configurações clicado')
-        // Exemplo: ir para o dashboard existente
-        navigate('/dashboard')
+        navigate('/configuracoes')
       },
       // Apenas gerentes e diretores podem ver este módulo
       visible: isManager || isDirector
