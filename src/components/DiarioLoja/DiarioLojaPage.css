@@ -579,79 +579,18 @@
   gap: 0.75rem;
 }
 
-.action-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.action-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.2;
-  transition: all 0.4s;
-  transform: translate(-50%, -50%);
-}
-
-.action-btn:hover::before {
-  width: 100%;
-  height: 100%;
-}
-
-.action-btn.success {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #10b981;
-}
-
-.action-btn.success:hover {
-  background: rgba(16, 185, 129, 0.8);
-  color: white;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    0 8px 25px rgba(16, 185, 129, 0.3),
-    0 0 20px rgba(16, 185, 129, 0.2);
-}
-
-.action-btn.danger {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ef4444;
-}
-
-.action-btn.danger:hover {
-  background: rgba(239, 68, 68, 0.8);
-  color: white;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    0 8px 25px rgba(239, 68, 68, 0.3),
-    0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-/* Estilos para o botão de deletar */
-.action-btn.delete {
+.botao-deleted {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
   color: #ef4444;
   opacity: 0.7;
   transition: all 0.3s ease;
+  padding: 8px 16px;
+  font-size: 14px;
 }
 
-.action-btn.delete:hover {
+.botao-deleted:hover {
   background: rgba(239, 68, 68, 0.8);
   color: white;
   opacity: 1;
@@ -1171,4 +1110,96 @@
   --primary-blue: #00d4ff;
   --primary-yellow: #fbbf24;
   --dark-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Botão de sucesso (venda) */
+.diario-loja-success-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 1;
+}
+.diario-loja-success-btn:hover {
+  background: rgba(16, 185, 129, 0.8);
+  color: #fff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3), 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+/* Botão de perigo (perdido) */
+.diario-loja-danger-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 1;
+}
+.diario-loja-danger-btn:hover {
+  background: rgba(239, 68, 68, 0.8);
+  color: #fff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+/* Botão de deletar (exclusivo do Diário da Loja) */
+.diario-loja-delete-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  color: #ef4444;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  font-size: 14px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.diario-loja-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.8);
+  color: #fff;
+  opacity: 1;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+@media (max-width: 768px) {
+  .diario-loja-success-btn,
+  .diario-loja-danger-btn,
+  .diario-loja-delete-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+    padding: 8px 12px;
+    opacity: 1 !important;
+    display: flex !important;
+  }
+}
+@media (max-width: 480px) {
+  .diario-loja-success-btn,
+  .diario-loja-danger-btn,
+  .diario-loja-delete-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    padding: 6px 8px;
+    opacity: 1 !important;
+    display: flex !important;
+  }
 }

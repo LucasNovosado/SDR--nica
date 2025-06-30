@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import { usePontos } from '../../hooks/usePontos'
+import { usePointsStore } from '../../store/usePointsStore'
 import { diarioService, Loja, Lead } from '../../services/diarioService'
 import { 
   ArrowLeft,
@@ -23,10 +23,11 @@ import CalendarDateFilter from './CalendarDateFilter'
 import './DiarioLojaPage.css'
 
 const DiarioLojaPage: React.FC = () => {
-  const { userWithLevel } = useAuth()
-  const { atualizarPontos, adicionarPontosInstantaneo } = usePontos() // <- MODIFICADO: Adicionado adicionarPontosInstantaneo
+  const { userWithLevel, loading: authLoading } = useAuth()
+  const { adicionarPontos } = usePointsStore()
   const navigate = useNavigate()
   
+  const [isCheckingSession, setIsCheckingSession] = useState(true)
   const [lojas, setLojas] = useState<Loja[]>([])
   const [lojaSelecionada, setLojaSelecionada] = useState<string>('')
   const [leads, setLeads] = useState<Lead[]>([])
@@ -59,16 +60,21 @@ const DiarioLojaPage: React.FC = () => {
   })
 
   useEffect(() => {
-    console.log('🔄 useEffect - userWithLevel mudou:', userWithLevel)
-    carregarLojas()
-  }, [userWithLevel])
+    if (authLoading) {
+      setIsCheckingSession(true)
+      return
+    }
+    setIsCheckingSession(false)
+    if (userWithLevel) {
+      carregarLojas()
+    }
+  }, [userWithLevel, authLoading])
 
   useEffect(() => {
-    console.log('🔄 useEffect - lojaSelecionada mudou:', lojaSelecionada)
+    if (isCheckingSession) return
     if (lojaSelecionada) {
       carregarDadosLoja()
     } else {
-      console.log('⚠️ Nenhuma loja selecionada, resetando dados')
       setLeads([])
       setEstatisticas({
         totalLeads: 0,
@@ -80,7 +86,7 @@ const DiarioLojaPage: React.FC = () => {
         taxaConversao: 0
       })
     }
-  }, [lojaSelecionada, dataInicio, dataFim])
+  }, [lojaSelecionada, dataInicio, dataFim, isCheckingSession])
 
   const carregarLojas = async () => {
     if (!userWithLevel) {
@@ -202,9 +208,8 @@ const DiarioLojaPage: React.FC = () => {
       // Buscar dados do lead antes da atualização para o modal de recompensa
       const leadAtual = leads.find(lead => lead.id === leadId)
       
-      // *** NOVO: Update instantâneo dos pontos ANTES da chamada para o servidor ***
-      console.log('🚀 [DiarioLoja] Atualizando pontos instantaneamente...')
-      adicionarPontosInstantaneo(50)
+      // Atualiza pontos globalmente (reativo)
+      await adicionarPontos(50)
       
       const { error, pontosAdicionados } = await diarioService.updateLeadConversao(
         leadId, 
@@ -233,18 +238,16 @@ const DiarioLojaPage: React.FC = () => {
       } else {
         console.error('❌ Erro ao atualizar conversão:', error)
         
-        // *** NOVO: Reverter os pontos em caso de erro ***
-        console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
-        adicionarPontosInstantaneo(-50)
+        // Reverte pontos em caso de erro
+        await adicionarPontos(-50)
         
         alert('Erro ao atualizar lead')
       }
     } catch (error) {
       console.error('❌ Erro ao confirmar conversão:', error)
       
-      // *** NOVO: Reverter os pontos em caso de erro ***
-      console.log('🔄 [DiarioLoja] Revertendo pontos devido ao erro...')
-      adicionarPontosInstantaneo(-50)
+      // Reverte pontos em caso de erro
+      await adicionarPontos(-50)
       
       alert('Erro inesperado ao atualizar lead')
     }
@@ -334,11 +337,20 @@ const DiarioLojaPage: React.FC = () => {
   const loja = lojas.find(l => l.id === lojaSelecionada)
   const showLojaSelector = lojas.length > 1 && userWithLevel?.nivel !== 'vendedor'
 
-  if (loading) {
+  if (authLoading || isCheckingSession) {
     return (
       <div className="diario-loading">
         <div className="loading-spinner"></div>
-        <p>Carregando dados...</p>
+        <p>Verificando sessão...</p>
+      </div>
+    )
+  }
+
+  if (!userWithLevel) {
+    return (
+      <div className="diario-loading">
+        <div className="loading-spinner"></div>
+        <p>Usuário não autenticado. Redirecionando...</p>
       </div>
     )
   }
@@ -447,14 +459,14 @@ const DiarioLojaPage: React.FC = () => {
                       {lead.convertido === null && (
                         <>
                           <button
-                            className="action-btn success"
+                            className="diario-loja-success-btn"
                             onClick={() => handleLeadConversao(lead.id, true)}
                             title="Marcar como vendido"
                           >
                             <ThumbsUp size={14} />
                           </button>
                           <button
-                            className="action-btn danger"
+                            className="diario-loja-danger-btn"
                             onClick={() => handleLeadConversao(lead.id, false)}
                             title="Marcar como perdido"
                           >
@@ -465,7 +477,7 @@ const DiarioLojaPage: React.FC = () => {
                       
                       {/* Botão de deletar - sempre visível */}
                       <button
-                        className="action-btn delete"
+                        className="diario-loja-delete-btn"
                         onClick={() => handleDeleteLead(lead)}
                         title="Excluir cliente"
                       >

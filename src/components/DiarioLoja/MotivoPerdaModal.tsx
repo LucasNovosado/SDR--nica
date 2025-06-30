@@ -65,11 +65,11 @@ const MotivoPerdaModal: React.FC<MotivoPerdaModalProps> = ({
         </div>
 
         <div className="modal-actions">
-          <button className="action-btn cancel" onClick={handleClose}>
+          <button className="motivo-perda-cancel-btn" onClick={handleClose}>
             Cancelar
           </button>
           <button 
-            className="action-btn confirm" 
+            className="motivo-perda-confirm-btn" 
             onClick={handleConfirm}
             disabled={!motivoSelecionado}
           >

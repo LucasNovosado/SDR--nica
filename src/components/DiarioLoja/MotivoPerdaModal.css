@@ -162,73 +162,6 @@
   border-top: 2px solid var(--dark-border);
 }
 
-.action-btn {
-  flex: 1;
-  padding: 0.875rem 1.5rem;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.action-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  transform: translate(-50%, -50%);
-}
-
-.action-btn:hover::before {
-  width: 200px;
-  height: 200px;
-}
-
-.action-btn.cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
-  border: 2px solid var(--dark-border);
-}
-
-.action-btn.cancel:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
-  border-color: var(--text-secondary);
-  transform: translateY(-2px);
-}
-
-.action-btn.confirm {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-}
-
-.action-btn.confirm:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(239, 68, 68, 0.4);
-}
-
-.action-btn.confirm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.action-btn:active {
-  transform: translateY(0);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -276,10 +209,6 @@
     padding: 1.25rem 1.5rem;
     flex-direction: column;
   }
-  
-  .action-btn {
-    padding: 1rem 1.5rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -317,9 +246,60 @@
   .modal-actions {
     padding: 1rem;
   }
-  
-  .action-btn {
-    font-size: 0.9rem;
-    padding: 0.875rem 1.25rem;
-  }
+}
+
+/* Botão cancelar do modal de motivo de perda */
+.motivo-perda-cancel-btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: 2px solid var(--dark-border);
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.motivo-perda-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+/* Botão confirmar do modal de motivo de perda */
+.motivo-perda-confirm-btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.motivo-perda-confirm-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(239, 68, 68, 0.4);
+}
+.motivo-perda-confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

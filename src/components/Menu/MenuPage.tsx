@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { 
@@ -10,15 +10,25 @@ import {
   Settings,
   Book
 } from 'lucide-react'
+import LoadingOverlay from './LoadingOverlay'
 import './MenuPage.css'
 
 const MenuPage: React.FC = () => {
   const { user, userWithLevel, isManager, isDirector, signOut } = useAuth()
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSignOut = async () => {
     await signOut()
     navigate('/login')
+  }
+
+  const handleNavigateDiario = () => {
+    setIsLoading(true)
+    setTimeout(() => {
+      navigate('/diario')
+      setIsLoading(false)
+    }, 2000)
   }
 
   const menuItems = [
@@ -28,9 +38,7 @@ const MenuPage: React.FC = () => {
       description: 'Controle diário da loja',
       icon: Book,
       color: 'blue',
-      onClick: () => {
-        navigate('/diario')
-      },
+      onClick: handleNavigateDiario,
       // Todos os usuários podem ver este módulo
       visible: true
     },
@@ -65,6 +73,7 @@ const MenuPage: React.FC = () => {
 
   return (
     <div className="menu-container">
+      {isLoading && <LoadingOverlay />}
       <div className="menu-background">
         <div className="floating-elements">
           <div className="floating-element blue"></div>
@@ -101,7 +110,7 @@ const MenuPage: React.FC = () => {
               </div>
             )}
           </div>
-          <button className="logout-button" onClick={handleSignOut}>
+          <button className="logout-button" onClick={handleSignOut} disabled={isLoading}>
             <LogOut size={18} />
             Sair
           </button>
@@ -117,6 +126,7 @@ const MenuPage: React.FC = () => {
                 key={item.id}
                 className={`menu-item ${item.color}`}
                 onClick={item.onClick}
+                disabled={isLoading}
               >
                 <div className="menu-item-icon">
                   <IconComponent size={48} />

@@ -119,11 +119,11 @@ const AdicionarLeadModal: React.FC<AdicionarLeadModalProps> = ({
         </div>
 
         <div className="modal-actions">
-          <button className="action-btn cancel" onClick={handleClose}>
+          <button className="adicionar-lead-cancel-btn" onClick={handleClose}>
             Cancelar
           </button>
           <button 
-            className="action-btn confirm" 
+            className="adicionar-lead-confirm-btn" 
             onClick={handleConfirm}
             disabled={!tipoSelecionado || (showLojaSelector && !lojaEscolhida)}
           >

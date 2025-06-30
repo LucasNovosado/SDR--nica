@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Trophy, Star, Sparkles, X } from 'lucide-react'
-import { usePontos } from '../../hooks/usePontos'
 import './PontosRewardModal.css'
 
 interface PontosRewardModalProps {
@@ -18,7 +17,6 @@ const PontosRewardModal: React.FC<PontosRewardModalProps> = ({
   leadTipo,
   leadConvertido
 }) => {
-  const { userName, nivelInfo, totalPontos } = usePontos()
   const [showDetails, setShowDetails] = useState(false)
   const [animationPhase, setAnimationPhase] = useState<'enter' | 'celebrate' | 'details'>('enter')
 
@@ -129,9 +127,6 @@ const PontosRewardModal: React.FC<PontosRewardModalProps> = ({
               </div>
             )}
           </div>
-
-          {/* Detalhes do Usuário */}
-          
         </div>
 
         {/* Botão de Ação */}

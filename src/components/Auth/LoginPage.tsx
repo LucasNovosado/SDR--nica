@@ -299,8 +299,6 @@ const LoginPage: React.FC = () => {
               color: '#64748b',
               textAlign: 'center'
             }}>
-              Render #{renderCount.current} | 
-              Estado: {loading ? 'carregando' : user ? 'logado' : 'aguardando'}
             </div>
           )}
         </div>
