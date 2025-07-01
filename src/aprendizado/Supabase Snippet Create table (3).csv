@@ -32,3 +32,6 @@ users_regras,criado_em,timestamp without time zone,YES,now()
 users_regras,user_ref,uuid,YES,null
 users_regras,created_at,timestamp without time zone,YES,now()
 users_regras,updated_at,timestamp without time zone,YES,now()
+users_regras_lojas,id,uuid,NO,gen_random_uuid()
+users_regras_lojas,user_regra_id,uuid,NO,null
+users_regras_lojas,loja_id,uuid,NO,null

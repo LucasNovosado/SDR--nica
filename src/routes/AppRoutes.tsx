@@ -9,6 +9,7 @@ import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ConfiguracoesPage from '../components/ConfiguracoesPage/ConfiguracoesPage'
 import CriarUsuarioPage from '../components/ConfiguracoesPage/CriarUsuarioPage'
+import AdicionarLojaPage from '../components/ConfiguracoesPage/AdicionarLojaPage'
 
 // Componente de Loading centralizado
 const AppLoading = () => (
@@ -85,6 +86,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <CriarUsuarioPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/configuracoes/adicionar-loja"
+        element={
+          <ProtectedRoute>
+            <AdicionarLojaPage />
           </ProtectedRoute>
         }
       />

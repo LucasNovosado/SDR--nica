@@ -8,10 +8,14 @@ const ConfiguracoesPage: React.FC = () => {
   return (
     <div className="configuracoes-container">
       <h2 className="configuracoes-titulo">Configurações</h2>
-      {/* Card ou botão para acessar a página de criação de usuário */}
+      {/* Menu de opções de configuração */}
       <div className="configuracoes-menu">
         <button className="btn-menu" onClick={() => navigate('/configuracoes/criar-usuario')}>
           Criar Usuário
+        </button>
+        {/* Botão para adicionar loja */}
+        <button className="btn-menu" onClick={() => navigate('/configuracoes/adicionar-loja')}>
+          Adicionar Loja
         </button>
       </div>
     </div>
