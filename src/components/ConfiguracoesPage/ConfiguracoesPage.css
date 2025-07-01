@@ -170,3 +170,79 @@
     font-size: 1.6rem;
   }
 }
+
+/* Botão flutuante adicionar usuário */
+.btn-add-user {
+  position: fixed;
+  right: 2.5rem;
+  bottom: 2.5rem;
+  z-index: 100;
+  background: linear-gradient(135deg, #8b5cf6 0%, #00d4ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-add-user:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #00b4d8 100%);
+  transform: scale(1.08);
+}
+
+/* Badges para lojas/cargos */
+.badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #8b5cf6 0%, #00d4ff 100%);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0.2rem 0.2rem 0;
+  box-shadow: 0 1px 4px #8b5cf622;
+}
+
+/* Zebra na tabela */
+.usuarios-table tr:nth-child(even) {
+  background: rgba(139, 92, 246, 0.07);
+}
+.usuarios-table tr:hover {
+  background: rgba(0, 212, 255, 0.10);
+  transition: background 0.2s;
+}
+
+/* Modal animado */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(26,26,46,0.65);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-content {
+  background: #23233a;
+  border-radius: 18px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-width: 320px;
+  max-width: 95vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  animation: modalPop 0.25s;
+}
+@keyframes modalPop {
+  from { transform: scale(0.92); opacity: 0.7; }
+  to { transform: scale(1); opacity: 1; }
+}

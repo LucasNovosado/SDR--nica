@@ -10,8 +10,8 @@ const ConfiguracoesPage: React.FC = () => {
       <h2 className="configuracoes-titulo">Configurações</h2>
       {/* Menu de opções de configuração */}
       <div className="configuracoes-menu">
-        <button className="btn-menu" onClick={() => navigate('/configuracoes/criar-usuario')}>
-          Criar Usuário
+        <button className="btn-menu" onClick={() => navigate('/configuracoes/gerenciar-usuarios')}>
+          Gerenciar Usuários
         </button>
         {/* Botão para adicionar loja */}
         <button className="btn-menu" onClick={() => navigate('/configuracoes/adicionar-loja')}>
