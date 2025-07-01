@@ -27,8 +27,8 @@ users_regras,id,uuid,NO,gen_random_uuid()
 users_regras,nome,text,YES,null
 users_regras,email,text,YES,null
 users_regras,nivel,text,YES,null
+users_regras,loja_id,uuid,YES,null
 users_regras,criado_em,timestamp without time zone,YES,now()
 users_regras,user_ref,uuid,YES,null
 users_regras,created_at,timestamp without time zone,YES,now()
 users_regras,updated_at,timestamp without time zone,YES,now()
-users_regras,loja_id,uuid,YES,null

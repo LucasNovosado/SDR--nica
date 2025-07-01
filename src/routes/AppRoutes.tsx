@@ -8,6 +8,7 @@ import DiarioLojaDetalhePage from '../components/DiarioLoja/DiarioLojaDetalhe/Di
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ConfiguracoesPage from '../components/ConfiguracoesPage/ConfiguracoesPage'
+import CriarUsuarioPage from '../components/ConfiguracoesPage/CriarUsuarioPage'
 
 // Componente de Loading centralizado
 const AppLoading = () => (
@@ -75,6 +76,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <ConfiguracoesPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/configuracoes/criar-usuario"
+        element={
+          <ProtectedRoute>
+            <CriarUsuarioPage />
           </ProtectedRoute>
         }
       />
