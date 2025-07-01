@@ -12,12 +12,21 @@ import {
 } from 'lucide-react'
 import './LoginPage.css'
 
+// Adiciona declaração global para window.deferredPrompt
+// @ts-ignore
+declare global {
+  interface Window {
+    deferredPrompt?: any;
+  }
+}
+
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
+  const [showAuthLoading, setShowAuthLoading] = useState(false)
 
   // Ref para controlar logs excessivos
   const renderCount = useRef(0)
@@ -37,6 +46,19 @@ const LoginPage: React.FC = () => {
       })
     }
   }, [user, loading, session, loginLoading])
+
+  // Ao detectar usuário logado, exibir loading obrigatório antes do menu
+  useEffect(() => {
+    if (user && session) {
+      setShowAuthLoading(true)
+      const timer = setTimeout(() => {
+        navigate('/menu')
+      }, 1500)
+      return () => clearTimeout(timer)
+    } else {
+      setShowAuthLoading(false)
+    }
+  }, [user, session, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -126,8 +148,8 @@ const LoginPage: React.FC = () => {
     )
   }
 
-  // Usuário logado
-  if (user && session) {
+  // Loading obrigatório após login
+  if (showAuthLoading) {
     return (
       <div className="login-container">
         <div className="login-background">
@@ -138,13 +160,12 @@ const LoginPage: React.FC = () => {
             <div className="floating-element yellow small"></div>
           </div>
         </div>
-
         <div className="login-content">
           <div className="login-card">
             <div className="login-header">
               <div className="logo">
                 <div className="logo-icon">
-                  <CheckCircle size={48} style={{ color: '#10b981' }} />
+                  <Loader2 size={48} className="animate-spin" />
                 </div>
                 <h1 className="logo-text">
                   <span className="text-gradient-blue">Única</span>
@@ -152,40 +173,12 @@ const LoginPage: React.FC = () => {
                 </h1>
               </div>
               <p className="login-subtitle">
-                Acesso autorizado!
+                Carregando menu...
               </p>
             </div>
-
-            <div style={{ padding: '2rem 0', textAlign: 'center' }}>
-              <h3 style={{ marginBottom: '1rem', color: '#1e293b' }}>
-                Bem-vindo, {user.email}!
-              </h3>
-              
-              <p style={{ marginBottom: '2rem', color: '#64748b', fontSize: '0.875rem' }}>
-                <strong>Usuário ID:</strong> {user.id.slice(0, 8)}...<br />
-                <strong>Último acesso:</strong> {new Date().toLocaleString('pt-BR')}
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <button
-                  onClick={() => navigate('/menu')}
-                  className="submit-button"
-                >
-                  <Rocket size={20} />
-                  Acessar Menu
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                  className="submit-button"
-                  style={{ 
-                    background: 'linear-gradient(135deg, #dc2626, #b91c1c)'
-                  }}
-                >
-                  <XCircle size={20} />
-                  Sair da Conta
-                </button>
-              </div>
+            <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: '0.5rem', textAlign: 'center', fontSize: '0.875rem', color: '#64748b' }}>
+              <strong>Aguarde...</strong><br />
+              Redirecionando para o menu principal
             </div>
           </div>
         </div>
@@ -286,21 +279,43 @@ const LoginPage: React.FC = () => {
                 </>
               )}
             </button>
-          </form>
+          </form>          
+        </div>
+        ÚnicaPRO 1.0.0
 
-          {/* Informações de debug minimizadas */}
-          {renderCount.current <= 5 && (
-            <div style={{ 
-              marginTop: '1rem', 
-              padding: '0.5rem', 
-              background: '#f1f5f9', 
-              borderRadius: '0.25rem',
-              fontSize: '0.75rem',
-              color: '#64748b',
-              textAlign: 'center'
-            }}>
-            </div>
-          )}
+      </div>
+      {/* Banner fixo de instalação do PWA */}
+      <div className="pwa-banner">
+        <div className="pwa-banner-content">
+          {/* Ícone Lucide de celular/tela inicial */}
+          <span className="pwa-banner-icon">
+            {/* Lucide: Smartphone */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+          </span>
+          <span className="pwa-banner-text">
+            Instale o ÚnicaPRO para uma experiência ainda melhor!
+          </span>
+          <button
+            className="pwa-banner-btn"
+            onClick={async () => {
+              // Tenta disparar o prompt nativo de instalação do PWA
+              if (window.deferredPrompt && typeof window.deferredPrompt.prompt === 'function') {
+                window.deferredPrompt.prompt();
+                // Opcional: aguarda escolha do usuário
+                window.deferredPrompt.userChoice?.then((choiceResult) => {
+                  console.log('PWA install choice:', choiceResult.outcome);
+                });
+              } else {
+                // Fallback: alerta ou log
+                alert('Para instalar, utilize a opção "Adicionar à tela inicial" do seu navegador.');
+              }
+            }}
+            type="button"
+          >
+            {/* Lucide: PlusSquare */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+            Adicionar na tela inicial
+          </button>
         </div>
       </div>
     </div>

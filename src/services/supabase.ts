@@ -7,7 +7,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Criação do client com persistência local garantida
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: localStorage, // Garante uso do localStorage
+    persistSession: true,  // Garante persistência
+    autoRefreshToken: true // Garante refresh automático
+  }
+})
 
 // Tipos para autenticação
 export interface User {

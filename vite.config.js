@@ -10,22 +10,22 @@ export default defineConfig({
       registerType: 'autoUpdate',
       devOptions: { enabled: true },
       manifest: {
-        name: 'SDR Única',
-        short_name: 'SDR',
-        start_url: '/',
+        name: 'ÚnicaPRO',
+        short_name: 'ÚnicaPRO',
+        start_url: '.',
         display: 'standalone',
-        background_color: '#0A2F5C', // azul já usado no projeto
-        theme_color: '#0A2F5C', // azul já usado no projeto
+        background_color: '#0a0a0f',
+        theme_color: '#00d4ff',
         icons: [
           {
-            src: 'src/assets/react.svg',
+            src: 'unicaPro.png',
             sizes: '192x192',
-            type: 'image/svg+xml',
+            type: 'image/png',
           },
           {
-            src: 'src/assets/react.svg',
+            src: 'unicaPro.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
           },
         ],
       },

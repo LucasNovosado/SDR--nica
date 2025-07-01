@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase, User } from '../services/supabase'
 import { userLevelsService, UserLevel, UserWithLevel } from '../services/userLevelsService'
 import { Session } from '@supabase/supabase-js'
+import { useNavigate } from 'react-router-dom'
 
 // Interface simples
 export interface SimpleUser {
@@ -15,6 +16,7 @@ export const useAuth = () => {
   const [userWithLevel, setUserWithLevel] = useState<UserWithLevel | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
   
   // Ref para controlar se já foi inicializado
   const initialized = useRef(false)
@@ -45,41 +47,29 @@ export const useAuth = () => {
 
     const initAuth = async () => {
       try {
-        // Verificar sessão atual
-        console.log('🔍 Verificando sessão...')
+        // Recupera sessão do Supabase (localStorage/IndexedDB)
+        // Se existir, mantém usuário logado
         const { data: { session }, error } = await supabase.auth.getSession()
-        
         if (error) {
           console.error('❌ Erro ao verificar sessão:', error)
           setLoading(false)
           return
         }
-
-        console.log('📋 Sessão encontrada:', !!session)
         setSession(session)
-        
         if (session?.user) {
           const simpleUser: SimpleUser = {
             id: session.user.id,
             email: session.user.email!,
             created_at: session.user.created_at
           }
-          console.log('👤 Usuário definido:', simpleUser.email)
           setUser(simpleUser)
-          
-          // Buscar dados do usuário com nível
           await fetchUserWithLevel(session.user.id)
         } else {
-          console.log('❌ Nenhum usuário encontrado')
           setUser(null)
           setUserWithLevel(null)
         }
-        
-        console.log('✅ Loading definido como false')
         setLoading(false)
-
       } catch (error) {
-        console.error('❌ Erro na inicialização:', error)
         setLoading(false)
       }
     }
@@ -87,67 +77,54 @@ export const useAuth = () => {
     // Executar inicialização
     initAuth()
 
-    // Configurar listener apenas uma vez
-    console.log('🎧 Configurando listener de auth...')
+    // Listener para mudanças de sessão (login, logout, refresh, expiração)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state changed:', event)
-        
-        // Atualizar apenas em eventos importantes
-        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
-          setSession(session)
-          
-          if (session?.user) {
-            const simpleUser: SimpleUser = {
-              id: session.user.id,
-              email: session.user.email!,
-              created_at: session.user.created_at
-            }
-            console.log('👤 Usuário atualizado via listener:', simpleUser.email)
-            setUser(simpleUser)
-            
-            // Buscar dados do usuário com nível
-            await fetchUserWithLevel(session.user.id)
-          } else {
-            console.log('❌ Usuário removido via listener')
-            setUser(null)
-            setUserWithLevel(null)
+        // Atualiza estado global sempre que a sessão mudar
+        setSession(session)
+        if (session?.user) {
+          const simpleUser: SimpleUser = {
+            id: session.user.id,
+            email: session.user.email!,
+            created_at: session.user.created_at
           }
+          setUser(simpleUser)
+          await fetchUserWithLevel(session.user.id)
+        } else {
+          setUser(null)
+          setUserWithLevel(null)
+          // Se sessão expirar ou logout, redireciona para login
+          navigate('/login')
         }
-        
-        // Não mudar loading no listener, só na inicialização
       }
     )
-
     subscriptionRef.current = subscription
-
-    // Cleanup function
     return () => {
-      console.log('🧹 useAuth - Cleanup executado')
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe()
         subscriptionRef.current = null
       }
     }
-  }, []) // IMPORTANTE: Array vazio - só executa UMA vez
+  }, [navigate]) // Inclui navigate para garantir redirecionamento
 
   const signIn = async (email: string, password: string) => {
-    console.log('🔐 Tentando fazer login com:', email)
+    // Função centralizada de login
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
-      
-      if (error) {
-        console.error('❌ Erro no login:', error.message)
-      } else {
-        console.log('✅ Login bem-sucedido!')
+      if (!error && data.session) {
+        setSession(data.session)
+        setUser({
+          id: data.user.id,
+          email: data.user.email!,
+          created_at: data.user.created_at
+        })
+        await fetchUserWithLevel(data.user.id)
       }
-      
       return { data, error }
     } catch (error) {
-      console.error('❌ Erro inesperado no login:', error)
       return { data: null, error }
     }
   }
@@ -174,22 +151,15 @@ export const useAuth = () => {
   }
 
   const signOut = async () => {
-    console.log('🚪 Fazendo logout...')
+    // Função centralizada de logout
     try {
       const { error } = await supabase.auth.signOut()
-      
-      if (!error) {
-        console.log('✅ Logout bem-sucedido!')
-        setUser(null)
-        setUserWithLevel(null)
-        setSession(null)
-      } else {
-        console.error('❌ Erro no logout:', error.message)
-      }
-      
+      setUser(null)
+      setUserWithLevel(null)
+      setSession(null)
+      navigate('/login')
       return { error }
     } catch (error) {
-      console.error('❌ Erro inesperado no logout:', error)
       return { error }
     }
   }

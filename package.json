@@ -1,5 +1,5 @@
 {
-  "name": "sdr-unica",
+  "name": "unicapro",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -27,5 +27,6 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
     "vite": "^7.0.0"
-  }
+  },
+  "displayName": "ÚnicaPRO"
 }
