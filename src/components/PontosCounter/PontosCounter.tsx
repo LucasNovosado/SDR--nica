@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Trophy, Star } from 'lucide-react'
-import { usePontos } from '../../hooks/usePontos'
+import { Trophy } from 'lucide-react'
+import { usePointsStore } from '../../store/usePointsStore'
 import './PontosCounter.css'
 
 const PontosCounter: React.FC = () => {
-  const { totalPontos, pontosHoje, loading, formatarPontos, nivelInfo } = usePontos()
+  const { pontos, loading } = usePointsStore()
   const [expanded, setExpanded] = useState(false)
 
   if (loading) {
@@ -26,18 +26,8 @@ const PontosCounter: React.FC = () => {
           <Trophy size={20} />
         </div>
         <div className="pontos-info">
-          <div className="pontos-total">{formatarPontos(totalPontos)}</div>
+          <div className="pontos-total">{pontos}</div>
           <div className="pontos-label">Pontos</div>
-        </div>
-      </div>
-
-      <div className="pontos-details">
-        <div className="pontos-section">
-          <div className="pontos-section-header">
-            <Star size={16} />
-            <span>Hoje</span>
-          </div>
-          <div className="pontos-section-value">+{pontosHoje}</div>
         </div>
       </div>
     </div>
