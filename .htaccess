@@ -1,0 +1,12 @@
+# .htaccess para SPA React (Vite) em Apache/Hostinger
+# Redireciona todas as rotas para index.html, exceto arquivos e pastas reais
+
+RewriteEngine On
+
+# Permite acesso direto a arquivos e pastas reais
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redireciona todas as outras requisições para index.html
+RewriteRule ^ /index.html [L]

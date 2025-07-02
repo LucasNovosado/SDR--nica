@@ -55,32 +55,30 @@ export const useAuth = () => {
   const lastUserId = useRef<string | null>(null)
 
   // Busca dados do usuário com nível
-  const fetchUserWithLevel = useCallback(async (userId: string) => {
+  const fetchUserWithLevel = useCallback(async (userId: string): Promise<boolean> => {
     if (lastUserId.current === userId && userWithLevel) {
-      console.log('ℹ️ useAuth: userWithLevel já carregado para', userId)
-      return
+      console.log('[fetchUserWithLevel] Já carregado para', userId)
+      return true
     }
     try {
-      console.log('🔵 useAuth: Buscando nível/permissão para user:', userId)
       const userWithLevelData = await userLevelsService.getUserWithLevel(userId)
       setUserWithLevel(userWithLevelData)
       lastUserId.current = userId
-      console.log('🟢 useAuth: userWithLevel carregado:', userWithLevelData)
+      console.log('[fetchUserWithLevel] Sucesso', userWithLevelData)
+      return true
     } catch (error) {
-      console.error('🔴 useAuth: Erro ao buscar userWithLevel:', error)
       setUserWithLevel(null)
+      console.log('[fetchUserWithLevel] Erro', error)
+      return false
     }
   }, [userWithLevel])
 
-  // Restaura sessão do Supabase e do storage
-  const restoreSession = useCallback(async (logPrefix = 'Inicial') => {
+  // Recupera sessão inicial
+  const restoreSession = useCallback(async () => {
     setLoading(true)
-    console.log(`🟢 useAuth: [${logPrefix}] Verificando sessão inicial...`)
+    console.log('[restoreSession] Iniciando')
     try {
-      const { data: { session: supaSession }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error('🔴 useAuth: Erro ao buscar sessão do Supabase:', error)
-      }
+      const { data: { session: supaSession } } = await supabase.auth.getSession()
       if (supaSession && supaSession.user) {
         const simpleUser: SimpleUser = {
           id: supaSession.user.id,
@@ -89,94 +87,92 @@ export const useAuth = () => {
         }
         setSession(supaSession)
         setUser(simpleUser)
-        saveSessionToStorage(supaSession, simpleUser)
         await fetchUserWithLevel(supaSession.user.id)
-        setLoading(false)
         setShowOffline(false)
-        console.log('✅ useAuth: Sessão recuperada', supaSession)
-        return
-      }
-      // Se não encontrou, tenta storage
-      const { session: storageSession, user: storageUser } = loadSessionFromStorage()
-      if (storageSession && storageUser) {
-        setSession(storageSession)
-        setUser(storageUser)
-        await fetchUserWithLevel(storageUser.id)
-        setLoading(false)
-        setShowOffline(false)
-        console.log('✅ useAuth: Sessão restaurada do localStorage', storageSession)
+        console.log('[restoreSession] Sessão recuperada', supaSession)
       } else {
         setSession(null)
         setUser(null)
         setUserWithLevel(null)
-        setLoading(false)
         setShowOffline(!window.navigator.onLine)
-        console.log('⚠️ useAuth: Sem sessão, redirecionando login')
+        console.log('[restoreSession] Sem sessão, redirecionando login')
       }
     } catch (error) {
       setSession(null)
       setUser(null)
       setUserWithLevel(null)
-      setLoading(false)
       setShowOffline(!window.navigator.onLine)
       console.error('🔴 useAuth: Erro inesperado ao restaurar sessão:', error)
+    } finally {
+      setLoading(false)
+      console.log('[restoreSession] FINALIZADO loading=false')
     }
   }, [fetchUserWithLevel])
 
   // Handler para eventos do Supabase
   const handleAuthChange = useCallback(async (event: string, newSession: Session | null) => {
-    console.log('🔁 useAuth: Evento onAuthStateChange:', event, newSession)
-    if (newSession && newSession.user) {
-      const simpleUser: SimpleUser = {
-        id: newSession.user.id,
-        email: newSession.user.email!,
-        created_at: newSession.user.created_at
-      }
-      setSession(newSession)
-      setUser(simpleUser)
-      saveSessionToStorage(newSession, simpleUser)
-      await fetchUserWithLevel(newSession.user.id)
-      setLoading(false)
-      setShowOffline(false)
-      console.log('✅ useAuth: Sessão atualizada pelo evento:', newSession)
-    } else {
-      // Se for SIGNED_OUT ou USER_DELETED, limpa tudo
-      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-        setSession(null)
-        setUser(null)
-        setUserWithLevel(null)
-        saveSessionToStorage(null, null)
-        setLoading(false)
+    console.log('[handleAuthChange] Evento', event, newSession)
+    try {
+      if (newSession && newSession.user) {
+        const simpleUser: SimpleUser = {
+          id: newSession.user.id,
+          email: newSession.user.email!,
+          created_at: newSession.user.created_at
+        }
+        setSession(newSession)
+        setUser(simpleUser)
+        await fetchUserWithLevel(newSession.user.id)
         setShowOffline(false)
-        console.log('🔴 useAuth: Usuário saiu/deletado, limpando tudo')
+        console.log('[handleAuthChange] Sessão atualizada', newSession)
       } else {
-        // Se for outro evento, tenta restaurar do storage antes de limpar
-        const { session: storageSession, user: storageUser } = loadSessionFromStorage()
-        if (storageSession && storageUser) {
-          setSession(storageSession)
-          setUser(storageUser)
-          await fetchUserWithLevel(storageUser.id)
-          setLoading(false)
-          setShowOffline(false)
-          console.log('✅ useAuth: Restaurando sessão do storage...')
-        } else {
+        // Se for SIGNED_OUT ou USER_DELETED, limpa tudo
+        if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
           setSession(null)
           setUser(null)
           setUserWithLevel(null)
           saveSessionToStorage(null, null)
-          setLoading(false)
-          setShowOffline(!window.navigator.onLine)
-          console.log('⚠️ useAuth: Sem sessão, redirecionando login')
+          setShowOffline(false)
+          console.log('🔴 useAuth: Usuário saiu/deletado, limpando tudo')
+        } else {
+          // Se for outro evento, tenta restaurar do storage antes de limpar
+          const { session: storageSession, user: storageUser } = loadSessionFromStorage()
+          if (storageSession && storageUser) {
+            setSession(storageSession)
+            setUser(storageUser)
+            await fetchUserWithLevel(storageUser.id)
+            setShowOffline(false)
+            console.log('✅ useAuth: Restaurando sessão do storage...')
+          } else {
+            setSession(null)
+            setUser(null)
+            setUserWithLevel(null)
+            saveSessionToStorage(null, null)
+            setShowOffline(!window.navigator.onLine)
+            console.log('⚠️ useAuth: Sem sessão, redirecionando login')
+          }
         }
       }
+    } catch (error) {
+      setSession(null)
+      setUser(null)
+      setUserWithLevel(null)
+      setShowOffline(!window.navigator.onLine)
+      console.error('🔴 useAuth: Erro inesperado ao processar evento:', error)
+    } finally {
+      setLoading(false)
+      console.log('[handleAuthChange] FINALIZADO loading=false')
     }
   }, [fetchUserWithLevel])
 
-  // Sempre tenta restaurar sessão ao abrir/voltar para o app
+  // Inicialização única
   useEffect(() => {
-    if (initialized.current) return
+    if (initialized.current) {
+      console.log('[useEffect:init] Já inicializado, return')
+      return
+    }
     initialized.current = true
-    restoreSession('Inicial')
+    console.log('[useEffect:init] Chamando restoreSession')
+    restoreSession()
     // Listener para eventos do Supabase
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange)
     subscriptionRef.current = subscription
@@ -187,7 +183,7 @@ export const useAuth = () => {
       if (focusTimeout) clearTimeout(focusTimeout)
       focusTimeout = setTimeout(() => { focusLock = false }, 1000)
       console.log('🔁 useAuth: Evento foco, revalidando sessão...')
-      restoreSession('Foco')
+      restoreSession()
     }
     window.addEventListener('focus', handleFocus)
     // Listener para online/offline
@@ -195,7 +191,7 @@ export const useAuth = () => {
       setIsOnline(true)
       setShowOffline(false)
       console.log('🟢 useAuth: Conexão restabelecida, tentando restaurar sessão...')
-      restoreSession('Online')
+      restoreSession()
     }
     const handleOffline = () => {
       setIsOnline(false)
@@ -206,6 +202,7 @@ export const useAuth = () => {
     window.addEventListener('offline', handleOffline)
     return () => {
       if (subscriptionRef.current) subscriptionRef.current.unsubscribe()
+      console.log('[useEffect:init] Unsubscribed')
       window.removeEventListener('focus', handleFocus)
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
@@ -213,9 +210,18 @@ export const useAuth = () => {
     }
   }, [restoreSession, handleAuthChange])
 
+  // Redireciona para login se não houver sessão após loading
+  useEffect(() => {
+    if (!loading && !user) {
+      console.log('[useEffect:redirect] Redirecionando para login')
+      navigate('/login')
+    }
+  }, [loading, user, navigate])
+
   // Métodos de autenticação
   const signIn = useCallback(async (email: string, password: string) => {
     setLoading(true)
+    console.log('[signIn] Iniciando')
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (!error && data.session && data.user) {
@@ -226,55 +232,52 @@ export const useAuth = () => {
         }
         setSession(data.session)
         setUser(simpleUser)
-        saveSessionToStorage(data.session, simpleUser)
         await fetchUserWithLevel(data.user.id)
-        setLoading(false)
-        setShowOffline(false)
-        console.log('✅ useAuth: Login bem-sucedido:', data.session)
-      } else {
-        setLoading(false)
-        setShowOffline(!window.navigator.onLine)
-        console.error('🔴 useAuth: Erro no login:', error)
+        console.log('[signIn] Login bem-sucedido', data.session)
       }
       return { data, error }
     } catch (error) {
-      setLoading(false)
-      setShowOffline(!window.navigator.onLine)
-      console.error('🔴 useAuth: Erro inesperado no login:', error)
+      console.log('[signIn] Erro', error)
       return { data: null, error }
+    } finally {
+      setLoading(false)
+      console.log('[signIn] FINALIZADO loading=false')
     }
   }, [fetchUserWithLevel])
 
   const signUp = useCallback(async (email: string, password: string) => {
     setLoading(true)
+    console.log('[signUp] Iniciando')
     try {
       const { data, error } = await supabase.auth.signUp({ email, password })
-      setLoading(false)
-      setShowOffline(!window.navigator.onLine)
       return { data, error }
     } catch (error) {
-      setLoading(false)
-      setShowOffline(!window.navigator.onLine)
+      console.log('[signUp] Erro', error)
       return { data: null, error }
+    } finally {
+      setLoading(false)
+      console.log('[signUp] FINALIZADO loading=false')
     }
   }, [])
 
   const signOut = useCallback(async () => {
     setLoading(true)
+    console.log('[signOut] Iniciando')
     try {
       const { error } = await supabase.auth.signOut()
       setSession(null)
       setUser(null)
       setUserWithLevel(null)
       saveSessionToStorage(null, null)
-      setLoading(false)
-      setShowOffline(false)
       navigate('/login')
+      console.log('[signOut] Logout concluído')
       return { error }
     } catch (error) {
-      setLoading(false)
-      setShowOffline(!window.navigator.onLine)
+      console.log('[signOut] Erro', error)
       return { error }
+    } finally {
+      setLoading(false)
+      console.log('[signOut] FINALIZADO loading=false')
     }
   }, [navigate])
 

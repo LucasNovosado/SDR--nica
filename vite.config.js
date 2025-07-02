@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -30,7 +29,12 @@ export default defineConfig({
         ],
       },
       workbox: {
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
+        // Se você tiver "offline.html" e quiser manter, pode configurar um fallback separado
+        // fallback: {
+        //   document: '/index.html',
+        //   offline: '/offline.html'
+        // }
       },
     })
   ],

@@ -281,7 +281,7 @@ const LoginPage: React.FC = () => {
             </button>
           </form>          
         </div>
-        ÚnicaPRO 1.0.5
+        ÚnicaPRO 1.0.6
 
       </div>
       {/* Banner fixo de instalação do PWA */}
