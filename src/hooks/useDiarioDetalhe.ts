@@ -128,4 +128,7 @@ export const useDiarioDetalhe = () => {
     motivosPerdaOptions,
     loading
   }
+  
 } 
+
+//testec
