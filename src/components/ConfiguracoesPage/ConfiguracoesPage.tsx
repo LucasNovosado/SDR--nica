@@ -23,3 +23,4 @@ const ConfiguracoesPage: React.FC = () => {
 }
 
 export default ConfiguracoesPage
+ 
