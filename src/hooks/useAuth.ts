@@ -293,6 +293,15 @@ export const useAuth = () => {
     return userLevelsService.canAccessStore(userLevel, userWithLevel?.loja_id || null, targetLojaId)
   }, [userLevel, userWithLevel])
 
+  // Log detalhado do estado final do hook
+  console.log('[useAuth:RETURN]', {
+    user,
+    userWithLevel,
+    session,
+    loading,
+    isOnline,
+    showOffline
+  })
   return {
     user,
     userWithLevel,

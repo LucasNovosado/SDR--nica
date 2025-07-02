@@ -9,8 +9,12 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth()
 
+  // Log de depuração
+  console.log('[ProtectedRoute]', { loading, user })
+
   // Se ainda está carregando (não deveria chegar aqui com a nova estrutura)
   if (loading) {
+    console.log('[ProtectedRoute] loading=true, exibindo spinner')
     return (
       <div className="loading-container">
         <div className="loading-content">
@@ -23,10 +27,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Se não está logado, redireciona para login
   if (!user) {
+    console.log('[ProtectedRoute] user=null, redirecionando para /login')
     return <Navigate to="/login" replace />
   }
 
   // Se está logado, renderiza o componente
+  console.log('[ProtectedRoute] user autenticado, renderizando children')
   return <>{children}</>
 }
 

@@ -1,9 +1,17 @@
+/// <reference types="vite/client" />
+
 import { createClient } from '@supabase/supabase-js'
+
+// Declaração global para suportar import.meta.env no Vite
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
+console.log('[supabase] VITE_SUPABASE_URL:', supabaseUrl)
+console.log('[supabase] VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? supabaseAnonKey.slice(0, 8) + '...' : 'MISSING')
+
 if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('[supabase] Missing Supabase environment variables', { supabaseUrl, supabaseAnonKey })
   throw new Error('Missing Supabase environment variables')
 }
 
